@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2018-10-18 02:16:33 sjoshi>
+;; Time-stamp: <2019-01-17 16:32:28 sjoshi>
 
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
@@ -43,8 +43,8 @@
 ;; Packages
 (require 'package)
 
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+;(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 
 ;; bootstrap use-package
 (package-initialize)
