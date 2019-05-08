@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2019-04-18 14:10:42 sjoshi>
+;; Time-stamp: <2019-05-08 12:43:59 sjoshi>
 
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
@@ -491,8 +491,9 @@
 (add-hook 'before-save-hook 'time-stamp)
 
 ;; start the server
-(when (eq system-type 'gnu/linux)
-  (setq server-socket-dir (format "/run/user/%d" (user-uid))))
+(if (eq system-type 'gnu/linux)
+    (setq server-socket-dir (format "/run/user/%d" (user-uid)))
+  (setq server-socket-dir user-emacs-directory))
 (server-start)
 
 ;; Highlight matching parens
