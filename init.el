@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2019-02-05 10:19:32 sjoshi>
+;; Time-stamp: <2019-04-18 14:10:42 sjoshi>
 
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
@@ -184,7 +184,8 @@
   :config (use-package magit-blame)
   :custom (git-commit-summary-max-length 72)
   :bind (("C-x g" . magit-status)
-         ("C-x M-g" . magit-dispatch-popup)))
+         ("C-x M-g" . magit-dispatch-popup)
+         ("C-x s-g" . magit-blame-popup)))
 
 ;; Projectile
 (use-package projectile
