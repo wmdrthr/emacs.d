@@ -93,15 +93,15 @@ A year spent in artificial intelligence is enough to make one believe in God.
 
 CAR and CDR now return extra values.
 
-The function CAR now returns two values.  Since it has to go to the trouble 
-to figure out if the object is carcdr-able anyway, we figured you might as 
-well get both halves at once.  For example, the following code shows how to 
+The function CAR now returns two values.  Since it has to go to the trouble
+to figure out if the object is carcdr-able anyway, we figured you might as
+well get both halves at once.  For example, the following code shows how to
 destructure a cons (SOME-CONS) into its two slots (THE-CAR and THE-CDR):
 
         (MULTIPLE-VALUE-BIND (THE-CAR THE-CDR) (CAR SOME-CONS) ...)
 
 For symmetry with CAR, CDR returns a second value which is the CAR of the
-object.  In a related change, the functions MAKE-ARRAY and CONS have been 
+object.  In a related change, the functions MAKE-ARRAY and CONS have been
 fixed so they don't allocate any storage except on the stack.  This should
 hopefully help people who don't like using the garbage collector because
 it cold boots the machine so often.
@@ -111,7 +111,7 @@ it cold boots the machine so often.
 A new system, the CIRCULATORY system, has been added.
 
 The long-experimental CIRCULATORY system has been released to users.  The
-Lisp Machine uses Type B fluid, the L machine uses Type A fluid.  When the 
+Lisp Machine uses Type B fluid, the L machine uses Type A fluid.  When the
 switch to Common Lisp occurs both machines will, of course, be Type O.
 Please check fluid level by using the DIP stick which is located in the
 back of VMI monitors.  Unchecked low fluid levels can cause poor paging
@@ -153,16 +153,16 @@ messages (such as IEC703, "disk error") and allows you to dequeue your job.
 %
 ===  ALL USERS PLEASE NOTE  ========================
 
-The garbage collector now works.  In addition a new, experimental garbage 
+The garbage collector now works.  In addition a new, experimental garbage
 collection algorithm has been installed.  With SI:%DSK-GC-QLX-BITS set to 17,
-(NOT the default) the old garbage collection algorithm remains in force; when 
+(NOT the default) the old garbage collection algorithm remains in force; when
 virtual storage is filled, the machine cold boots itself.  With SI:%DSK-GC-
 QLX-BITS set to 23, the new garbage collector is enabled.  Unlike most garbage
-collectors, the new gc starts its mark phase from the mind of the user, rather 
-than from the obarray.  This allows the garbage collection of significantly 
+collectors, the new gc starts its mark phase from the mind of the user, rather
+than from the obarray.  This allows the garbage collection of significantly
 more Qs.  As the garbage collector runs, it may ask you something like "Do you
 remember what SI:RDTBL-TRANS does?", and if you can't give a reasonable answer
-in thirty seconds, the symbol becomes a candidate for GCing.  The variable 
+in thirty seconds, the symbol becomes a candidate for GCing.  The variable
 SI:%GC-QLX-LUSER-TM governs how long the GC waits before timing out the user.
 %
 ===  ALL USERS PLEASE NOTE  ========================
@@ -202,7 +202,7 @@ by the corresponding row and column labels.
         (t (append (list (implode (nf a (car c)))) (nf a (cdr c))))))
 
 (defun AD (want-job challenging boston-area)
-  (cond 
+  (cond
    ((or (not (equal want-job 'yes))
         (not (equal boston-area 'yes))
         (lessp challenging 7)) () )
@@ -319,21 +319,21 @@ WBT     Water Binary Tree
 %
 ***** Special AI Seminar (abstract)
 
-It has been widely recognized that AI programs require expert knowledge 
+It has been widely recognized that AI programs require expert knowledge
 in order to perform well in complex domains.  But knowledge alone is not
-sufficient for some applications; wisdom is needed as well.  Accordingly, 
-we have developed a new approach to artificial intelligence which we call 
-"wisdom engineering".  As a test of our ideas, we have written IMMANUEL, a 
-wisdom based system for the task domain of western philosophical thought.  
-IMMANUEL was supplied initially with 200 wisdom units which contained wisdom 
-about such elementary concepts as mind, matter, being, nothingness, and so 
-forth.  IMMANUEL was then allowed to run freely, guided by the heuristic 
-rules contained in its heterarchically organized meta wisdom base.  IMMANUEL 
-succeeded in rediscovering most of the important philosophical ideas developed 
-in western culture over the course of the last 25 centuries, including those 
+sufficient for some applications; wisdom is needed as well.  Accordingly,
+we have developed a new approach to artificial intelligence which we call
+"wisdom engineering".  As a test of our ideas, we have written IMMANUEL, a
+wisdom based system for the task domain of western philosophical thought.
+IMMANUEL was supplied initially with 200 wisdom units which contained wisdom
+about such elementary concepts as mind, matter, being, nothingness, and so
+forth.  IMMANUEL was then allowed to run freely, guided by the heuristic
+rules contained in its heterarchically organized meta wisdom base.  IMMANUEL
+succeeded in rediscovering most of the important philosophical ideas developed
+in western culture over the course of the last 25 centuries, including those
 underlying Plato's theory of government, Kant's metaphysics, Nietzsche's theory
-of value, and Husserl's phenomenology.  In this seminar, we will describe 
-IMMANUEL's achievements and internal architecture.  We will also briefly 
+of value, and Husserl's phenomenology.  In this seminar, we will describe
+IMMANUEL's achievements and internal architecture.  We will also briefly
 discuss our recent efforts to apply wisdom engineering to oil exploration.
 %
         THE LESSER-KNOWN PROGRAMMING LANGUAGES #12: LITHP
@@ -406,14 +406,14 @@ Reach for semantics intensional.
         Over Montague grammer
 Not admitting it's incomprehensible!
 %
-The wonderful thing about Scheme is:            
-Scheme is a wonderful thing.                    
-Complex procedural ideas                        
-Are expressed via simple strings.               
-Its clear semantics, and lack of pedantics,     
-Help make programs run, run, RUN!               
-But the most wonderful thing about Scheme is:   
-Programming in it is fun,                       
+The wonderful thing about Scheme is:
+Scheme is a wonderful thing.
+Complex procedural ideas
+Are expressed via simple strings.
+Its clear semantics, and lack of pedantics,
+Help make programs run, run, RUN!
+But the most wonderful thing about Scheme is:
+Programming in it is fun,
 Programming in it is FUN!
 
 [with apologies to A. A. Milne, Ed.]
@@ -421,7 +421,7 @@ Programming in it is FUN!
 A cocky novice once said to Stallman: "I can guess why the editor is called
 Emacs, but why is the justifier called Bolio?".
 
-Stallman replied forcefully, "Names are but names, `Emac & Bolio's` is the name 
+Stallman replied forcefully, "Names are but names, `Emac & Bolio's` is the name
 of a confectionary shop in Boston-town.  Neither of these men had anything
 to do with the software."
 
@@ -551,7 +551,7 @@ the lithe recursive calculus of Scheme.
 %
 We also serve the Schememonster with prayers in form of procedures and
 sacrifice small Pascal-users to him. In return he makes our parentheses come
-alive - and makes our definitions make sense. 
+alive - and makes our definitions make sense.
                 -- The Schememonster's Friends
 %
 Several factors keep him going. Being loved and admired makes him happy.
@@ -563,17 +563,17 @@ When the Schememonster runs into rebel scum he wants revenge. He might destroy
 your programs just 5 minutes before you are supposed to turn in your
 assignment, he might talk the professors over to put the hardest problems
 into your exam, etc.  Please notice that the Schememonster is extremely clever
-and therefore nothing to play with. Do take him seriously! 
+and therefore nothing to play with. Do take him seriously!
 
 The last warning comes quickly and after that there is nothing you can do to
 avoid the ultimate revenge - being his main course on the breakfast/lunch/
 dinner/snacktable.  At that time, it is too late to beg for mercy. The
 Schememonster never forgets! The Schememonster never dies! The Schememonster
-always wins! 
+always wins!
                 -- The Schememonster's Friends
 %
 Artificial intelligence, like fusion power, has been ten years away for the
-last 30 years. 
+last 30 years.
                 -- Conrad Stack
 %
 If you have a procedure with ten parameters, you probably missed some.
@@ -614,7 +614,7 @@ Smith's Test for Artificial Life:
 When animal-rights activists and right-to-life protesters are marching outside
 your laboratory, then you know you've definitely made progress in your
 artificial life research.
-                -- Donald A. Smith 
+                -- Donald A. Smith
 %
 You shouldn't anthropomorphize computers; they don't like it.
 %
@@ -764,7 +764,7 @@ Who's afraid of the garbage collector?
 %
 Who's afraid of ARPA?
 %
-The Three Laws of Thermodynamics: 
+The Three Laws of Thermodynamics:
    1) You can't win.
    2) You can't break even.
    3) You can't even get out of the game.
@@ -796,8 +796,8 @@ DDT: Security in Obscurity.
 Multics: Obscurity in Security.
 %
 
-UU UU   M   M       
-U U U   M   M        
+UU UU   M   M
+U U U   M   M
 U   U   M   M
 U   U   M   M
 U   U   M   M
@@ -1008,7 +1008,7 @@ his toys.
  Amylfax Shuffletime = less than 12% Freight Drain
  Log 5; 5 Jobs, Two Detached
  Minimum Entry Gate = 1
- Total National Imbalance = 3456 Boxcars 
+ Total National Imbalance = 3456 Boxcars
  Gate CLOSED.
 %
 "... the most important thing in the programming language is the name.  A
@@ -1055,7 +1055,7 @@ I don't plan to maintain it, just to install it.
                 -- Richard M. Stallman
 %
 ;;; PROLIS IS AN ALIST USED TO PROTECT NON-ATOMIC READ-MACRO FUNCTIONS
-;;; FROM BEING GC'ED. EACH ITEM ON THE ALIST IS OF THE FORM 
+;;; FROM BEING GC'ED. EACH ITEM ON THE ALIST IS OF THE FORM
 ;;; (FUN RDT . NUM) WHERE:
 ;;;	FUN IS THE FUNCTION TO BE PROTECTED
 ;;;	RDT IS THE SAR OF THE READTABLE CONCERNED
@@ -1063,14 +1063,14 @@ I don't plan to maintain it, just to install it.
 ;;;		<ASCII CHAR VALUE> FOR READ-MACRO FUNCTION
 ;;; PROLIS IS UPDATED BY SSGCPRO AND SSGCREL.
 %
-#-NIL 
+#-NIL
 ;; In the MacLISP case, we don't use the SOURCE-TRANS feature, since
 ;; we don't want to clutter up the address space of a non-COMPLR
 ;; environment with all those crufty expansion subrs
 (let ((definer `(,DEFMAC ,fun ,args ,.body)))
   `(PROGN 'COMPILE
 	   (EVAL-WHEN (LOAD)
-		(AND (STATUS FEATURE COMPLR) 
+		(AND (STATUS FEATURE COMPLR)
 		     (EVAL ',definer)))
            (EVAL-WHEN (EVAL COMPILE)
 		,definer)))
@@ -1453,7 +1453,7 @@ JUST A MOMENT,	JUST A MOMENT, . . .
 I PREDICT FAILURE OF THE ALPHA ECHO - THREE FIVE UNIT WITHIN 72 HOURS.
 THIS IS A COMPLETELY RELIABLE PREDICTION.
 %
-MSG:  AI     1     
+MSG:  AI     1
 Date: 05/02/83 13:51:15
 From: CSTACY @ MIT-MC
 
@@ -1476,7 +1476,7 @@ The AI KA10 has been flushed, please update your programs.
             For one brief shining moment
             That was known as Camelot....
 %
-MSG:  END    GAME  
+MSG:  END    GAME
 Date: 11/02/83 19:20:51
 From: KMP @ MIT-MC
 Re:   I see no DM here.
@@ -1846,8 +1846,8 @@ And nobody talks to a host that's close
 Unless the host that isn't close
 Is busy, hung or dead...
 %
-Since oral sex is topologically equivalent to anal sex, converting one 
-to the other is simply a matter of finding the right conformal map. 
+Since oral sex is topologically equivalent to anal sex, converting one
+to the other is simply a matter of finding the right conformal map.
 Currently I only have solutions for a spherical girlfriend.
                 -- Robert Bowler
 %
@@ -2008,7 +2008,7 @@ was gonna locate us in a cell. He said: "Kid, I'm gonna INTERN you in a
 cell. I want your manual and your mouse."
 	I said, "Greenblatt, I can understand your wantin' my manual, so
 I don't have any documentation about the cell, but what do you want my
-mouse for?" and he said, "Kid, we don't want any window system problems". 
+mouse for?" and he said, "Kid, we don't want any window system problems".
 I said, "Greenblatt, did you think I was gonna deexpose myself for
 litterin'?"
 	Greenblatt said he was makin' sure, and, friends, Greenblatt
@@ -2222,9 +2222,9 @@ circumstances.
     That in lists would associate values with keys
     I went home and turned on my trusty Apollo
     And wrote a function whose definition follows:
-    
+
         (cdr (assq key a-list))
-    
+
     A one-liner I thought, fool that I was
     Just two simple calls without a COND clause
     But when I tried this function to run
@@ -2318,10 +2318,10 @@ will make the shape of the book approximately cubical.  Now, there are
 I'll let you individually extrapolate and fantasize from there.
                 -- GLS
 %
-Clearly one can make this generalization and people can live with it. 
+Clearly one can make this generalization and people can live with it.
 We could make the generalization that LIST can take some other options,
 perhaps stating that we want a CDR-coded list, and it can define some
-accessor functions, and some auxilliary storage, and make arrays a 
+accessor functions, and some auxilliary storage, and make arrays a
 specialization of CONS cells, but that would be silly (wouldn't it??).
 
 The point is that vectors are a useful enough concept to not need to suffer
@@ -2376,7 +2376,7 @@ programmers use to write poor imitations of programs for poor
 imitations of employers who pay poor imitations of programmers
 salaries.  I think I beat that one to death.
                 -- Jim H. Jacobs, CS403: Object Oriented Programming
-% 
+%
 I have stopped reading Stephen King novels.  Now I just read C code
 instead.
                 -- Richard A. O'Keefe
@@ -2397,9 +2397,9 @@ sharpen sticks.
 flame and burned the entire admin wing to the ground? Yes, that's a
 known bug. We'll be fixing it in the next release. Until then, try not
 to use European date format, and keep an extinguisher handy."
-                -- slam@pobox.com (Tequila Rapide) 
+                -- slam@pobox.com (Tequila Rapide)
 %
-> Feel free to post more examples of "Why c++ sucks". ;-) 
+> Feel free to post more examples of "Why c++ sucks". ;-)
 
 Read through the C++ Public Review Document and look for occurences of
 the phrases "behavior is undefined" and especially "no diagnostic is
@@ -2419,7 +2419,7 @@ ITEM 163 (Sussman):
 
 To exchange two variables in LISP without using a third variable:
 
-(SETQ X (PROG2 0 Y (SETQ Y X))) 
+(SETQ X (PROG2 0 Y (SETQ Y X)))
 %
 ITEM 172 (Gosper):
 
@@ -2751,7 +2751,7 @@ Functions compute; macros translate.
                 -- Dave Moon
 %
 Much of [Scheme's] power comes from its simplicity ... "The fox knows
-many things, but the hedgehog knows one great thing."  Scheme is a 
+many things, but the hedgehog knows one great thing."  Scheme is a
 hedgehog.
                 -- PC Scheme Tutorial, viii (Texas Instruments)
 %
@@ -3307,7 +3307,7 @@ assembled at a remote location is:
 
 ;add some text:
         BLCODE [FOO]            ;add FOO.
-        BLCODE [BAR]            ;add BAR (note BLCODE inserts CRLF's, 
+        BLCODE [BAR]            ;add BAR (note BLCODE inserts CRLF's,
 
 ;assemble what has been accumulated:
         BNKBLK                  ;which expands into ...
@@ -3714,7 +3714,7 @@ valuable resource for the Lisp community, like the erudite and cryptic
 Zen master on the mountaintop."
                 -- James A. Crippen
 %
-Dalinian: Lisp. Java. Which one sounds sexier? 
+Dalinian: Lisp. Java. Which one sounds sexier?
 
 RevAaron: Definitely Lisp. Lisp conjures up images of hippy coders,
 drugs, sex, and rock & roll. Late nights at Berkeley, coding in Lisp
@@ -3842,7 +3842,7 @@ Lisp. What a mind-job.
 %
 ;; KLUDGE: ANSI, in its wisdom, says that
 ;; EQL-SPECIALIZER-FORMs in EQL specializers are evaluated at
-;; DEFMETHOD expansion time. 
+;; DEFMETHOD expansion time.
 [...]
 ;; KLUDGE: PCL, in its wisdom, sometimes calls methods with
 ;; types which don't match their specializers.
@@ -3875,7 +3875,7 @@ Lisp. What a mind-job.
 ;; symbols when converting interpreted functions,
 ;; causing COMPILE-FILE to think the file has a real
 ;; problem, causing COMPILE-FILE to return FAILURE-P
-;; set (not just WARNINGS-P set). 
+;; set (not just WARNINGS-P set).
                 -- SBCL src/compiler/ir1tran.lisp
 %
 ;;; ANSI, in its wisdom, specifies that it's an error (specifically a
@@ -3904,7 +3904,7 @@ Lisp. What a mind-job.
 <bunny_magnet> [ IS | *-]--> [ THERE | *-]--> [ NO | *-]--> [ STANDARD |
     *-]--> [ COMMAND | *-]--> [ ? | nil]
 %
-;; 
+;;
 ;; Unlike the SOURCE-NAME slot, this slot's value should never
 ;; affect ordinary code behavior, only debugging/diagnostic behavior.
 ;;
@@ -3926,7 +3926,7 @@ Read my Lisp! No Gnu Faxes!
 %
 XML is the Lisp of the 90s.
 %
-> What's so great about the lambda calculus? 
+> What's so great about the lambda calculus?
 
 In a profession plagued by, "when all you have is a hammer, everything
 looks like a nail," we get really excited when someone is able to come
@@ -3945,7 +3945,7 @@ A long time ago, someone in the Lisp industry told me it was poor form
 quote people; it suggests that they lack value.
                 -- Kent M Pitman <pitman@world.std.com> in comp.lang.lisp
 %
-> What's so great about the lambda calculus? 
+> What's so great about the lambda calculus?
 
 In a profession plagued by, "when all you have is a hammer, everything
 looks like a nail," we get really excited when someone is able to come
@@ -4021,7 +4021,7 @@ Infrequently Asked Questions about Common Lisp
 Q: Why doesn't (sort my-variable)  update the variable?
 A: The default calling convention in Common Lisp is call by value, so it
 can't  modify arguments passed into a function. Use the appropriate compiler
-switch to make it call by reference. 
+switch to make it call by reference.
 %
 Infrequently Asked Questions about Common Lisp
 
