@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2019-05-08 12:43:59 sjoshi>
+;; Time-stamp: <2019-07-26 13:54:52 sjoshi>
 
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
@@ -10,12 +10,8 @@
 
 (set-language-environment "UTF-8")
 (setenv "LANG" "en_US.UTF-8")
-(require 'cl)
 
-(setq user-full-name "Shantanu Joshi"
-      user-mail-address (if (eq system-type 'darwin)
-                            "shantanu@helpshift.com"
-                          "weemadarthur@yggdrasil.in"))
+(require 'cl)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Add timestamps to 'message' output.
@@ -38,6 +34,19 @@
   "trim trailing whitespace (tabs and spaces) from str"
   (if (string-match "[ \t\n]*$" str)
       (replace-match "" nil nil str)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Personalization
+
+(setq hostname (chomp (shell-command-to-string "hostname -s")))
+
+(setq default-directory "~/")
+
+(setq user-full-name "Shantanu Joshi"
+      user-mail-address (if (equal hostname "baelrog")
+                            "shantanu@helpshift.com"
+                          "weemadarthur@yggdrasil.in"))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Packages
@@ -167,6 +176,7 @@
   :ensure t
   :config
   (dumb-jump-mode)
+  :init (setq dumb-jump-prefer-searcher 'rg)
   (unbind-key "C-M-q" dumb-jump-mode-map)
   :bind (("C-M-g" . dumb-jump-go)
          ("C-s-q" . dumb-jump-quick-look)))
@@ -248,15 +258,46 @@
 (global-set-key '[(f5)] 'switch-theme)
 
 
-;; Default font
-(when (window-system)
-  (progn (set-face-attribute 'default nil :font "Fira Code Retina" :height 140)
-         (set-frame-font "Fira Code Retina" nil t)
-         (load (concat user-emacs-directory "site-local/firacode.el"))
-         (firacode-setup)))
+;; Fonts
 
-;; Unicode fallback font
-(set-fontset-font t 'unicode (font-spec :family "DejaVu Sans Mono"))
+(use-package unicode-fonts
+  :ensure t
+  :config (unicode-fonts-setup))
+
+;; Default font
+(if (equal hostname "baelrog")
+    (progn
+      (set-face-attribute 'default nil :font "Fira Code Retina" :height 140)
+      (let ((alist '((33 . ".\\(?:\\(?:==\\|!!\\)\\|[!=]\\)")
+                     (35 . ".\\(?:###\\|##\\|_(\\|[#(?[_{]\\)")
+                     (36 . ".\\(?:>\\)")
+                     (37 . ".\\(?:\\(?:%%\\)\\|%\\)")
+                     (38 . ".\\(?:\\(?:&&\\)\\|&\\)")
+                     (42 . ".\\(?:\\(?:\\*\\*/\\)\\|\\(?:\\*[*/]\\)\\|[*/>]\\)")
+                     (43 . ".\\(?:\\(?:\\+\\+\\)\\|[+>]\\)")
+                     (45 . ".\\(?:\\(?:-[>-]\\|<<\\|>>\\)\\|[<>}~-]\\)")
+                     (46 . ".\\(?:\\(?:\\.[.<]\\)\\|[.=-]\\)")
+                     (47 . ".\\(?:\\(?:\\*\\*\\|//\\|==\\)\\|[*/=>]\\)")
+                     (48 . ".\\(?:x[a-zA-Z]\\)")
+                     (58 . ".\\(?:::\\|[:=]\\)")
+                     (59 . ".\\(?:;;\\|;\\)")
+                     (60 . ".\\(?:\\(?:!--\\)\\|\\(?:~~\\|->\\|\\$>\\|\\*>\\|\\+>\\|--\\|<[<=-]\\|=[<=>]\\||>\\)\\|[*$+~/<=>|-]\\)")
+                     (61 . ".\\(?:\\(?:/=\\|:=\\|<<\\|=[=>]\\|>>\\)\\|[<=>~]\\)")
+                     (62 . ".\\(?:\\(?:=>\\|>[=>-]\\)\\|[=>-]\\)")
+                     (63 . ".\\(?:\\(\\?\\?\\)\\|[:=?]\\)")
+                     (91 . ".\\(?:]\\)")
+                     (92 . ".\\(?:\\(?:\\\\\\\\\\)\\|\\\\\\)")
+                     (94 . ".\\(?:=\\)")
+                     (119 . ".\\(?:ww\\)")
+                     (123 . ".\\(?:-\\)")
+                     (124 . ".\\(?:\\(?:|[=|]\\)\\|[=>|]\\)")
+                     (126 . ".\\(?:~>\\|~~\\|[>=@~-]\\)"))))
+        (dolist (char-regexp alist)
+          (set-char-table-range composition-function-table (car char-regexp)
+                                `([,(cdr char-regexp) 0 font-shape-gstring])))
+        (set-frame-font "Fira Code Retina" nil t)))
+  (set-face-attribute 'default nil :font "Iosevka" :height 140))
+
 
 ;; Smart modeline
 (use-package smart-mode-line
@@ -735,6 +776,7 @@ or as a formatted string containing the non-zero components of above list eg. 2d
 (setq initial-buffer-choice 'welcome-buffer)
 (setq initial-scratch-message nil)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defun donuts ()
   (interactive)
   (message "» Mmm, donuts."))
