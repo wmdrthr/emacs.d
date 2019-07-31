@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2019-07-26 13:54:52 sjoshi>
+;; Time-stamp: <2019-08-15 15:13:20 weemadarthur>
 
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
@@ -201,35 +201,37 @@
 (use-package projectile
   :ensure t
   :config (projectile-mode +1)
+  :diminish projectile-mode
   :bind (("s-p" . 'projectile-command-map)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Org Mode customization
-(global-set-key (kbd "C-c a") 'org-agenda)
+(when (equal hostname "baelrog")
+  (global-set-key (kbd "C-c a") 'org-agenda)
 
-(setq org-agenda-files '("/Users/sjoshi/src/helpshift/data/helpshift.org"))
+  (setq org-agenda-files '("/Users/sjoshi/src/helpshift/data/helpshift.org"))
 
-;;set priority range from A to C with default A
-(setq org-highest-priority ?A)
-(setq org-lowest-priority ?C)
-(setq org-default-priority ?A)
+  ;;set priority range from A to C with default A
+  (setq org-highest-priority ?A)
+  (setq org-lowest-priority ?C)
+  (setq org-default-priority ?A)
 
-(setq org-log-done t)
+  (setq org-log-done t)
 
-;;open agenda in current window
-(setq org-agenda-window-setup (quote current-window))
+  ;;open agenda in current window
+  (setq org-agenda-window-setup (quote current-window))
 
-;;capture todo items using C-c c t
-(define-key global-map (kbd "C-c c") 'org-capture)
-(setq org-capture-templates
-      '(("t" "todo" entry (file+headline "/Users/sjoshi/src/helpshift/data/helpshift.org" "Tasks")
-         "* TODO [#A] %?")))
+  ;;capture todo items using C-c c t
+  (define-key global-map (kbd "C-c c") 'org-capture)
+  (setq org-capture-templates
+        '(("t" "todo" entry (file+headline "/Users/sjoshi/src/helpshift/data/helpshift.org" "Tasks")
+           "* TODO [#A] %?")))
 
-(add-hook 'org-mode-hook 'disable-auto-composition)
+  (add-hook 'org-mode-hook 'disable-auto-composition)
 
-(use-package org-bullets
-  :ensure t
-  :hook (org-mode . org-bullets-mode))
+  (use-package org-bullets
+    :ensure t
+    :hook (org-mode . org-bullets-mode)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Appearance
@@ -468,7 +470,7 @@
 ;; Rust Mode
 (use-package rust-mode
   :ensure t
-  :config (add-to-list 'exec-path "/Users/sjoshi/.cargo/bin"))
+  :config (add-to-list 'exec-path (expand-file-name "~/.cargo/bin")))
 
 (use-package cargo
   :after rust-mode
@@ -743,16 +745,18 @@ or as a formatted string containing the non-zero components of above list eg. 2d
 ;; Get a fortune cookie
 (defun fortune-cookie (&optional print-message)
   (interactive "p")
-  (let ((cookie (shell-command-to-string
-                 (concat "/usr/local/bin/fortune "
-                         (concat user-emacs-directory "site-local/fortune-lambda")))))
+  (let ((cookie (chomp (with-temp-buffer
+                         (call-process "fortune" nil t nil
+                                       (expand-file-name (concat user-emacs-directory
+                                                                 "site-local/fortune-lambda")))
+                         (buffer-string)))))
     (if print-message
         (message cookie)
       (format ";; %s\n\n"
               (replace-regexp-in-string
                "\n" "\n;; " ; comment each line
                (replace-regexp-in-string
-                "\n$" ""    ; remove trailing linebreak
+                "\n$" ""
                 cookie))))))
 
 ;; show an ascii art of emacs
