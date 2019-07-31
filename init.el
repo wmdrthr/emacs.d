@@ -489,7 +489,11 @@
          (racer-mode . eldoc-mode))
   :config (racer-setup))
 
+;; Golang Mode
+(use-package go-mode
+  :ensure t)
 
+;; CSV mode
 (use-package csv-mode
   :ensure t
   :hook (csv-mode . disable-auto-composition))
