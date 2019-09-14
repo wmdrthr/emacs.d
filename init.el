@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2019-08-15 15:13:20 weemadarthur>
+;; Time-stamp: <2019-09-14 12:48:55 weemadarthur>
 
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
@@ -166,10 +166,9 @@
   :bind (("C-;" . avy-goto-char-timer)
          ("M-g M-g" . avy-goto-line)))
 
-;; The Silver Searcher
-(use-package ag
-  :ensure t
-  :custom (ag-executable "/usr/local/bin/ag"))
+;; Searching - use both ripgrep and the silver searcher
+(use-package ag :ensure t)
+(use-package rg :ensure t)
 
 ;; Dumb Jump
 (use-package dumb-jump
