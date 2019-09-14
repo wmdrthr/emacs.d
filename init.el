@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2019-09-14 12:48:55 weemadarthur>
+;; Time-stamp: <2019-09-14 12:52:01 weemadarthur>
 
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
@@ -244,17 +244,18 @@
 ;; Theme
 (use-package doom-themes :ensure t)
 (use-package dracula-theme :ensure t)
+(use-package nord-theme :ensure t)
 
 (load-theme 'doom-one t)
-(defvar current-theme :doom)
+(defvar selected-themes '(doom-one dracula nord))
 
 (defun switch-theme ()
   (interactive)
-  (if (eq :doom current-theme)
-      (progn (load-theme 'dracula t)
-             (setq current-theme :dracula))
-    (progn (load-theme 'doom-one t)
-           (setq current-theme :doom))))
+  (let ((current-theme (car selected-themes))
+        (remaining-themes (cdr selected-themes)))
+    (load-theme current-theme)
+    (message "Switching theme to %s" current-theme)
+    (setq selected-themes (nconc remaining-themes (list current-theme)))))
 
 (global-set-key '[(f5)] 'switch-theme)
 
