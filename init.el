@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2019-09-14 12:52:01 weemadarthur>
+;; Time-stamp: <2019-09-23 10:07:51 shantanu>
 
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
@@ -46,7 +46,6 @@
       user-mail-address (if (equal hostname "baelrog")
                             "shantanu@helpshift.com"
                           "weemadarthur@yggdrasil.in"))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Packages
@@ -94,6 +93,11 @@
   (ido-use-faces t)
   (ido-enable-flex-mathing t)
   (ido-everywhere t))
+
+;; Use ido with imenu
+(use-package idomenu
+  :load-path "site-local/"
+  :bind ("C-." . idomenu))
 
 ;; rainbow delimiters
 (use-package rainbow-delimiters
