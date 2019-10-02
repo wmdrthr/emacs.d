@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2019-10-02 18:24:19 weemadarthur>
+;; Time-stamp: <2019-10-02 18:28:32 weemadarthur>
 
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
@@ -196,6 +196,14 @@
   :bind (("C-M-g" . dumb-jump-go)
          ("C-s-q" . dumb-jump-quick-look)))
 
+;; Smart scan
+(use-package smartscan
+  :ensure t
+  :config
+  (global-smartscan-mode t)
+  :bind (("M-n" . smartscan-symbol-go-forward)
+         ("M-p" . smartscan-symbol-go-backward)))
+
 ;; Persistent scratch buffer
 (use-package persistent-scratch
   :ensure t
@@ -218,6 +226,19 @@
   :config (projectile-mode +1)
   :diminish projectile-mode
   :bind (("s-p" . 'projectile-command-map)))
+
+(use-package multiple-cursors
+  :ensure t
+  :bind
+   (("C-c m t" . mc/mark-all-like-this)
+    ("C-c m m" . mc/mark-all-like-this-dwim)
+    ("C-c m l" . mc/edit-lines)
+    ("C-c m e" . mc/edit-ends-of-lines)
+    ("C-c m a" . mc/edit-beginnings-of-lines)
+    ("C-c m n" . mc/mark-next-like-this)
+    ("C-c m p" . mc/mark-previous-like-this)
+    ("C-c m s" . mc/mark-sgml-tag-pair)
+    ("C-c m d" . mc/mark-all-like-this-in-defun)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Org Mode customization
