@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2019-09-23 10:07:51 shantanu>
+;; Time-stamp: <2019-10-02 17:48:19 weemadarthur>
 
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
@@ -61,6 +61,16 @@
          (package-install 'use-package)))
 
 (add-to-list 'exec-path "/usr/local/bin")
+
+(setq optional-packages
+      (pcase hostname
+        ("baelrog" '(eshell org-mode python-mode clojure-mode))
+        ("fenrir" '(rust-mode haskell-mode python-mode))))
+
+
+(defmacro package-enabled-p (package &rest body)
+  `(when (member ',package ',optional-packages)
+     ,@body))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Useful packages
 
@@ -123,13 +133,15 @@
   :config (ansi-color-for-comint-mode-on))
 
 ;; eshell
-(use-package eshell
-  :defer t
-  :bind ("C-M-e" . eshell)
-  :hook (eshell-mode . disable-auto-composition)
-  :custom
-  (eshell-history-size 5000)
-  (eshell-save-history-on-exit t))
+(package-enabled-p
+ eshell
+ (use-package eshell
+   :defer t
+   :bind ("C-M-e" . eshell)
+   :hook (eshell-mode . disable-auto-composition)
+   :custom
+   (eshell-history-size 5000)
+   (eshell-save-history-on-exit t)))
 
 ;; File Backups
 (defun backup-each-save-filter (filename)
@@ -209,7 +221,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Org Mode customization
-(when (equal hostname "baelrog")
+(package-enabled-p org-mode
   (global-set-key (kbd "C-c a") 'org-agenda)
 
   (setq org-agenda-files '("/Users/sjoshi/src/helpshift/data/helpshift.org"))
@@ -359,41 +371,48 @@
   :config (global-company-mode))
 
 ;; Python mode
-(use-package anaconda-mode
-  :ensure t
-  :diminish anaconda-mode
-  :hook python-mode
-  :custom (python-indent-offset 4))
+(package-enabled-p
+ python-mode
 
-;; completion for Python mode using anaconda
-(use-package company-anaconda
-  :ensure t
-  :after (company anaconda-mode)
-  :config (add-hook 'python-mode-hook
-                    (lambda () (add-to-list 'company-backends 'company-anaconda))))
+ (use-package anaconda-mode
+   :ensure t
+   :diminish anaconda-mode
+   :hook python-mode
+   :custom (python-indent-offset 4))
+
+ ;; completion for Python mode using anaconda
+ (use-package company-anaconda
+   :ensure t
+   :after (company anaconda-mode)
+   :config (add-hook 'python-mode-hook
+                     (lambda () (add-to-list 'company-backends 'company-anaconda)))))
+
 
 ;; Clojure
-(use-package clojure-mode
-  :ensure t)
+(package-enabled-p
+ clojure-mode
 
-;; Clojure CIDER mode
-(use-package cider
-  :ensure t
-  :after clojure-mode
-  :custom
-  (nrepl-hide-special-buffers t)
-  (cider-prefer-local-resources t)
-  (cider-stacktrace-default-filters '(tooling dup))
-  (cider-show-error-buffer 'only-in-repl)
-  (cider-stacktrace-fill-column 80)
-  (cider-repl-display-in-current-window t)
-  (cider-repl-display-help-banner nil)
-  (cider-repl-use-pretty-printing t)
-  (cider-repl-history-file (concat user-emacs-directory "cider-history.dat"))
-  :bind (:map cider-repl-mode-map
-              ("C-c C-l" . cider-repl-clear-buffer)
-              :map cider-mode-map
-              ("C-C M-n" . cider-repl-set-ns)))
+ (use-package clojure-mode
+   :ensure t)
+
+ ;; Clojure CIDER mode
+ (use-package cider
+   :ensure t
+   :after clojure-mode
+   :custom
+   (nrepl-hide-special-buffers t)
+   (cider-prefer-local-resources t)
+   (cider-stacktrace-default-filters '(tooling dup))
+   (cider-show-error-buffer 'only-in-repl)
+   (cider-stacktrace-fill-column 80)
+   (cider-repl-display-in-current-window t)
+   (cider-repl-display-help-banner nil)
+   (cider-repl-use-pretty-printing t)
+   (cider-repl-history-file (concat user-emacs-directory "cider-history.dat"))
+   :bind (:map cider-repl-mode-map
+               ("C-c C-l" . cider-repl-clear-buffer)
+               :map cider-mode-map
+               ("C-C M-n" . cider-repl-set-ns))))
 
 ;; paredit
 (use-package paredit
@@ -413,54 +432,58 @@
               ("M-{" . paredit-wrap-curly)))
 
 ;; Common Lisp
-(when (file-exists-p (expand-file-name "~/.quicklisp/slime-helper.el"))
-  (load (expand-file-name "~/.quicklisp/slime-helper.el"))
-  (setq inferior-lisp-program "/usr/local/bin/sbcl --no-linedit")
-  (eval-after-load "slime"
-    '(progn
-       (slime-setup '(slime-fancy
-                      slime-fancy-inspector
-                      slime-asdf
-                      slime-indentation
-                      slime-fontifying-fu))
-       (setq slime-complete-symbol-function 'slime-fuzzy-complete-symbol
-             slime-fuzzy-completion-in-place nil
-             slime-complete-symbol*-fancy t
-             slime-net-coding-system 'utf-8-unix)
-       (slime-autodoc-mode)
-       (add-hook 'slime-mode-hook
-                 (lambda ()
-                   (set-variable lisp-indent-function 'common-lisp-indent-function)))
-       ;; Point slime to local copy of HyperSpec
-       (load (expand-file-name "~/.quicklisp/clhs-use-local.el") t))))
+
+(package-enabled-p
+ common-lisp-mode
+
+ (load (expand-file-name "~/.quicklisp/slime-helper.el"))
+ (setq inferior-lisp-program "/usr/local/bin/sbcl --no-linedit")
+ (eval-after-load "slime"
+   '(progn
+      (slime-setup '(slime-fancy
+                     slime-fancy-inspector
+                     slime-asdf
+                     slime-indentation
+                     slime-fontifying-fu))
+      (setq slime-complete-symbol-function 'slime-fuzzy-complete-symbol
+            slime-fuzzy-completion-in-place nil
+            slime-complete-symbol*-fancy t
+            slime-net-coding-system 'utf-8-unix)
+      (slime-autodoc-mode)
+      (add-hook 'slime-mode-hook
+                (lambda ()
+                  (set-variable lisp-indent-function 'common-lisp-indent-function)))
+      ;; Point slime to local copy of HyperSpec
+      (load (expand-file-name "~/.quicklisp/clhs-use-local.el") t))))
 
 
 ;; Haskell mode
-(when (file-exists-p (expand-file-name "~/.ghc"))
+(package-enabled-p
+ haskell-mode
 
-  (use-package haskell-mode
-    :ensure t
-    :bind (:map haskell-mode-map
-                ("C-c C-l" . haskell-process-load-or-reload-promp)
-                ("C-c C-z" . haskell-interactive-switch))
-    :config
-    (require 'haskell-interactive-mode)
-    (require 'haskell-process)
-    :init ;; these are not custom variables
-    (setq haskell-process-suggest-remove-import-lines t
-          haskell-process-auto-import-loaded-modules t
-          haskell-process-log t
-          haskell-indentation-electric-flag t
-          haskell-process-args-stack-ghci '("--ghci-options=-ferror-spans -fshow-loaded-modules")))
+ (use-package haskell-mode
+   :ensure t
+   :bind (:map haskell-mode-map
+               ("C-c C-l" . haskell-process-load-or-reload-promp)
+               ("C-c C-z" . haskell-interactive-switch))
+   :config
+   (require 'haskell-interactive-mode)
+   (require 'haskell-process)
+   :init ;; these are not custom variables
+   (setq haskell-process-suggest-remove-import-lines t
+         haskell-process-auto-import-loaded-modules t
+         haskell-process-log t
+         haskell-indentation-electric-flag t
+         haskell-process-args-stack-ghci '("--ghci-options=-ferror-spans -fshow-loaded-modules")))
 
-  (use-package company-ghc
-    :ensure t
-    :custom (company-ghc-show-info t)
-    :config (add-to-list 'company-backends 'company-ghc))
+ (use-package company-ghc
+   :ensure t
+   :custom (company-ghc-show-info t)
+   :config (add-to-list 'company-backends 'company-ghc))
 
-  (use-package intero
-    :ensure t
-    :hook (haskell-mode . intero-mode)))
+ (use-package intero
+   :ensure t
+   :hook (haskell-mode . intero-mode)))
 
 
 ;; YAML mode
@@ -472,32 +495,38 @@
 (add-hook 'c-mode-common-hook 'disable-auto-composition)
 
 ;; Rust Mode
-(use-package rust-mode
-  :ensure t
-  :config (add-to-list 'exec-path (expand-file-name "~/.cargo/bin")))
+(package-enabled-p
+ rust-mode
 
-(use-package cargo
-  :after rust-mode
-  :ensure t
-  :hook (rust-mode . cargo-minor-mode))
+ (use-package rust-mode
+   :ensure t
+   :config (add-to-list 'exec-path (expand-file-name "~/.cargo/bin")))
 
-(defun racer-setup ()
-  (let ((rust-root (chomp (with-temp-buffer
-                            (call-process "rustc" nil t nil "--print" "sysroot")
-                            (buffer-string)))))
-    (setq racer-rust-src-path (concat rust-root "/lib/rustlib/src/rust/src"))))
+ (use-package cargo
+   :after rust-mode
+   :ensure t
+   :hook (rust-mode . cargo-minor-mode))
 
-(use-package racer
-  :after rust-mode
-  :ensure t
-  :bind (:map rust-mode-map ("TAB" . company-indent-or-complete-common))
-  :hook ((rust-mode . racer-mode)
-         (racer-mode . eldoc-mode))
-  :config (racer-setup))
+ (defun racer-setup ()
+   (let ((rust-root (chomp (with-temp-buffer
+                             (call-process "rustc" nil t nil "--print" "sysroot")
+                             (buffer-string)))))
+     (setq racer-rust-src-path (concat rust-root "/lib/rustlib/src/rust/src"))))
+
+ (use-package racer
+   :after rust-mode
+   :ensure t
+   :bind (:map rust-mode-map ("TAB" . company-indent-or-complete-common))
+   :hook ((rust-mode . racer-mode)
+          (racer-mode . eldoc-mode))
+   :config (racer-setup)))
 
 ;; Golang Mode
-(use-package go-mode
-  :ensure t)
+(package-enabled-p
+ go-mode
+
+ (use-package go-mode
+   :ensure t))
 
 ;; CSV mode
 (use-package csv-mode
@@ -649,21 +678,24 @@
    (interactive)
    (find-file user-init-file)))
 
-(defun cider-connect-helper (iport)
-  "Helper for connecting to an already running Clojure repl."
-  (interactive "P")
-  (cl-flet ((read-nrepl-port (project-dir)
-                             (ignore-errors
-                               (car (read-from-string
-                                     (with-temp-buffer
-                                       (insert-file-contents (concat (file-name-as-directory project-dir)
-                                                                     ".nrepl-port"))
-                                       (buffer-string)))))))
-    (let* ((project-dir (read-directory-name "Project: " "~/src/helpshift/moby" nil nil nil))
-           (port (or iport
-                     (read-nrepl-port project-dir)
-                     (read-number "Port: "))))
-      (cider-connect (list :host "localhost" :port port :project-dir project-dir)))))
+(package-enabled-p
+ clojure-mode
+
+ (defun cider-connect-helper (iport)
+   "Helper for connecting to an already running Clojure repl."
+   (interactive "P")
+   (cl-flet ((read-nrepl-port (project-dir)
+                              (ignore-errors
+                                (car (read-from-string
+                                      (with-temp-buffer
+                                        (insert-file-contents (concat (file-name-as-directory project-dir)
+                                                                      ".nrepl-port"))
+                                        (buffer-string)))))))
+     (let* ((project-dir (read-directory-name "Project: " "~/src/helpshift/moby" nil nil nil))
+            (port (or iport
+                      (read-nrepl-port project-dir)
+                      (read-number "Port: "))))
+       (cider-connect (list :host "localhost" :port port :project-dir project-dir))))))
 
 (bind-key "C-9" 'cider-connect-helper)
 
