@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2019-10-02 17:48:19 weemadarthur>
+;; Time-stamp: <2019-10-02 18:24:19 weemadarthur>
 
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
@@ -167,9 +167,9 @@
 (use-package recentf
   :custom
   (recentf-save-file "~/.emacs.d/.recentf")
-  (recentf-max-menu-items 0)
+  (recentf-max-menu-items 15)
   (recentf-max-saved-items 50)
-  (recentf-auto-cleanup 300)
+  (recentf-auto-cleanup 300) ;; every 5 minutes
   (recentf-filename-handlers '(abbreviate-file-name))
   :config (recentf-mode 1)
   :bind ("C-c r" . recentf-open-files))
@@ -275,6 +275,8 @@
 
 (global-set-key '[(f5)] 'switch-theme)
 
+;; Display time in the toolbar
+(display-time-mode 1)
 
 ;; Fonts
 
