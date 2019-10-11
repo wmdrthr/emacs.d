@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2019-10-02 18:29:00 weemadarthur>
+;; Time-stamp: <2019-10-11 14:03:08 shantanu>
 
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
@@ -697,9 +697,11 @@
 
 (bind-key
  "C-0"
- (lambda ()
-   (interactive)
-   (find-file user-init-file)))
+ (lambda (arg)
+   (interactive "P")
+   (if arg
+       (load-file user-init-file)
+       (find-file user-init-file))))
 
 (package-enabled-p
  clojure-mode
