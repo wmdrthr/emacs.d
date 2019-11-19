@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2019-11-19 10:57:58 shantanu>
+;; Time-stamp: <2019-11-19 11:07:15 shantanu>
 
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
@@ -232,10 +232,14 @@
 (when (equal "baelrog" hostname)
   (global-set-key (kbd "C-c a") 'org-agenda)
 
-  (setq org-agenda-files '("/Users/sjoshi/src/helpshift/data/helpshift.org"))
+  (require 'org)
 
-  ;;set priority range from A to C with default A
+  (global-set-key (kbd "C-c a") 'org-agenda)
 
+  (setq org-agenda-files (list
+                          (expand-file-name "~/src/helpshift/data/helpshift.org")))
+
+  ;; Set priority range from A to C with default A
   (setq org-highest-priority ?A)
   (setq org-lowest-priority ?C)
   (setq org-default-priority ?A)
@@ -243,21 +247,33 @@
   (setq org-log-done t)
 
   ;;open agenda in current window
-
   (setq org-agenda-window-setup (quote current-window))
 
   ;;capture todo items using C-c c t
-
   (define-key global-map (kbd "C-c c") 'org-capture)
   (setq org-capture-templates
-        '(("t" "todo" entry (file+headline "/Users/sjoshi/src/helpshift/data/helpshift.org" "Tasks")
+        '(("t" "todo" entry (file+headline (expand-file-name "~/src/helpshift/data/helpshift.org")
+                                           "Tasks")
            "* TODO [#A] %?")))
+  (setq org-todo-keywords '((sequence "TODO" "IN-PROGRESS" "WAITING" "DONE")))
 
+  ;; Disable ligatures in org mode - fonts with ligatures crash emacs
+  ;; when an org file is opened
   (add-hook 'org-mode-hook 'disable-auto-composition)
 
   (use-package org-bullets
     :ensure t
-    :hook (org-mode . org-bullets-mode)))
+    :hook (org-mode . org-bullets-mode))
+
+  (dolist (face '(org-level-1
+                  org-level-2
+                  org-level-3
+                  org-level-4
+                  org-level-5
+                  org-level-6
+                  org-level-7
+                  org-level-8))
+    (set-face-attribute face nil :height 1.0)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Appearance
