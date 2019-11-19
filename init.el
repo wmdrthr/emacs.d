@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2019-10-11 14:03:08 shantanu>
+;; Time-stamp: <2019-11-19 10:53:33 shantanu>
 
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
@@ -199,10 +199,9 @@
 ;; Smart scan
 (use-package smartscan
   :ensure t
-  :config
-  (global-smartscan-mode t)
-  :bind (("M-n" . smartscan-symbol-go-forward)
-         ("M-p" . smartscan-symbol-go-backward)))
+  :config (global-smartscan-mode t)
+  :bind (("s-n" . smartscan-symbol-go-forward)
+         ("s-p" . smartscan-symbol-go-backward)))
 
 ;; Persistent scratch buffer
 (use-package persistent-scratch
@@ -225,7 +224,7 @@
   :ensure t
   :config (projectile-mode +1)
   :diminish projectile-mode
-  :bind (("s-p" . 'projectile-command-map)))
+  :bind (("C-s-p" . 'projectile-command-map)))
 
 (use-package multiple-cursors
   :ensure t
