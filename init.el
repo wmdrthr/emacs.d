@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2019-11-19 11:07:15 shantanu>
+;; Time-stamp: <2019-11-28 15:46:32 shantanu>
 
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
@@ -187,7 +187,10 @@
 ;; Smart scan
 (use-package smartscan
   :ensure t
-  :config (global-smartscan-mode t)
+  :config
+  (global-smartscan-mode t)
+  (unbind-key "M-n" smartscan-map)
+  (unbind-key "M-p" smartscan-map)
   :bind (("s-n" . smartscan-symbol-go-forward)
          ("s-p" . smartscan-symbol-go-backward)))
 
