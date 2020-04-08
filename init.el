@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2019-11-28 15:46:32 shantanu>
+;; Time-stamp: <2020-04-08 22:15:31 weemadarthur>
 
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
@@ -91,7 +91,7 @@
   :custom
   (ido-case-fold t)
   (ido-use-faces t)
-  (ido-enable-flex-mathing t)
+  (ido-enable-flex-matching t)
   (ido-everywhere t))
 
 ;; Use ido with imenu
