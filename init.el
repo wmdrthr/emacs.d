@@ -1,7 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
 ;; Time-stamp: <2020-05-27 00:18:38 shantanu>
-
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
 ;;  |  __/ | | | | | (_| | (__\__ \
@@ -329,7 +328,7 @@
           (set-char-table-range composition-function-table (car char-regexp)
                                 `([,(cdr char-regexp) 0 font-shape-gstring])))
         (set-frame-font "Fira Code Retina" nil t)))
-  (set-face-attribute 'default nil :font "Iosevka" :height 140))
+  (set-face-attribute 'default nil :font "Iosevka" :height 125))
 
 
 ;; Smart modeline
@@ -801,6 +800,12 @@ or as a formatted string containing the non-zero components of above list eg. 2d
                     (null (cdr (assoc 'buffer-file-truename
                                       (buffer-local-variables buf))))))))
 (bind-key "C-x u" 'uptime)
+
+(defun new-temporary-buffer ()
+  "generate and switch to a new temporary buffer"
+  (interactive)
+  (switch-to-buffer (generate-new-buffer "untitled")))
+(bind-key "C-c n" 'new-temporary-buffer)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customize the scratch buffer, add a welcome message
