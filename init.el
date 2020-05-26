@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2020-05-27 00:18:19 shantanu>
+;; Time-stamp: <2020-05-27 00:18:38 shantanu>
 
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
@@ -266,17 +266,8 @@
 
   (use-package org-bullets
     :ensure t
-    :hook (org-mode . org-bullets-mode))
-
-  (dolist (face '(org-level-1
-                  org-level-2
-                  org-level-3
-                  org-level-4
-                  org-level-5
-                  org-level-6
-                  org-level-7
-                  org-level-8))
-    (set-face-attribute face nil :height 1.0)))
+    :custom (org-bullets-bullet-list '("◉" "◆" "✜" "▶"))
+    :hook (org-mode . org-bullets-mode)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Appearance
