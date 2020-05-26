@@ -279,22 +279,14 @@
       '(menu-bar-mode tool-bar-mode scroll-bar-mode))
 
 ;; Theme
-(use-package doom-themes :ensure t)
-(use-package dracula-theme :ensure t)
-(use-package nord-theme :ensure t)
-
-(load-theme 'doom-one t)
-(defvar selected-themes '(doom-one dracula nord))
-
-(defun switch-theme ()
-  (interactive)
-  (let ((current-theme (car selected-themes))
-        (remaining-themes (cdr selected-themes)))
-    (load-theme current-theme)
-    (message "Switching theme to %s" current-theme)
-    (setq selected-themes (nconc remaining-themes (list current-theme)))))
-
-(global-set-key '[(f5)] 'switch-theme)
+(use-package doom-themes
+  :ensure t
+  :config
+  (load-theme 'doom-one)
+  (doom-themes-org-config)
+  (custom-theme-set-faces
+   'doom-one
+   '(outline-1 ((t (:height 1.1 :foreground "#51afef" :weight semi-bold))))))
 
 ;; Display time in the toolbar
 (display-time-mode 1)
