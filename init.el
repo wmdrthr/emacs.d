@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2020-04-08 22:15:31 weemadarthur>
+;; Time-stamp: <2020-05-27 00:18:19 shantanu>
 
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
@@ -11,13 +11,13 @@
 (set-language-environment "UTF-8")
 (setenv "LANG" "en_US.UTF-8")
 
-(require 'cl)
+(require 'cl-lib)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Add timestamps to 'message' output.
 (defadvice message (before when-was-that activate)
   (when (> (length (ad-get-arg 0)) 0)
-    (ad-set-arg 0 (concat (format-time-string "[%a %T] ")
+    (ad-set-arg 0 (concat (format-time-string "[%a %T.%3N] ")
                           (ad-get-arg 0)))))
 
 (setq emacs-load-start-time (current-time))
@@ -804,7 +804,7 @@ or as a formatted string containing the non-zero components of above list eg. 2d
   (message "Emacs %s: up %s, %d buffers, %d files"
            emacs-version (uptime-details t)
            (length (buffer-list))
-           (count t (buffer-list)
+           (cl-count t (buffer-list)
                   :test-not
                   (lambda (ignore buf)
                     (null (cdr (assoc 'buffer-file-truename
