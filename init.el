@@ -378,12 +378,20 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Programming Modes and Related Packages
 
+(use-package python
+  :ensure nil
+  :custom
+  (python-indent-offset 4))
+
 ;; Company mode - autocompletion
 (use-package company
-  :defer t
   :ensure t
+  :defer t
   :diminish company-mode
-  :config (global-company-mode))
+  :config (global-company-mode)
+  :custom
+  (company-tooltip-align-annotations t)
+  (company-minimum-prefix-length 3))
 
 ;; Python mode
 (use-package anaconda-mode
