@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2020-05-27 00:18:38 shantanu>
+;; Time-stamp: <2020-07-11 11:08:43 shantanu>
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
 ;;  |  __/ | | | | | (_| | (__\__ \
@@ -806,6 +806,22 @@ or as a formatted string containing the non-zero components of above list eg. 2d
   (interactive)
   (switch-to-buffer (generate-new-buffer "untitled")))
 (bind-key "C-c n" 'new-temporary-buffer)
+
+(when (eq 27 emacs-major-version)
+  "Fix for bug in latest emacs version"
+  (defun load-history-filename-element (file-regexp)
+    "Get the first elt of `load-history' whose car matches FILE-REGEXP.
+        Return nil if there isn't one."
+    (let* ((loads load-history)
+           (load-elt (and loads (car loads))))
+      (save-match-data
+        (while (and loads
+                    (or (null (car load-elt))
+                        (not (and (stringp (car load-elt))
+                                  (string-match file-regexp (car load-elt))))))
+          (setq loads (cdr loads)
+                load-elt (and loads (car loads)))))
+      load-elt)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customize the scratch buffer, add a welcome message
