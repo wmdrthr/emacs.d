@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2020-07-11 11:08:43 shantanu>
+;; Time-stamp: <2020-10-09 12:52:11 weemadarthur>
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
 ;;  |  __/ | | | | | (_| | (__\__ \
@@ -34,17 +34,8 @@
   (if (string-match "[ \t\n]*$" str)
       (replace-match "" nil nil str)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Personalization
-
-(setq hostname (chomp (shell-command-to-string "hostname -s")))
-
+(add-to-list 'exec-path "/usr/local/bin")
 (setq default-directory "~/")
-
-(setq user-full-name "Shantanu Joshi"
-      user-mail-address (if (equal hostname "baelrog")
-                            "shantanu@helpshift.com"
-                          "weemadarthur@yggdrasil.in"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Packages
@@ -59,7 +50,24 @@
   (progn (package-refresh-contents)
          (package-install 'use-package)))
 
-(add-to-list 'exec-path "/usr/local/bin")
+(defvar w/features '()
+  "List of features/packages to be enabled/installed/configured.")
+
+(defmacro w/featurep (feature &rest body)
+  `(when (member ,feature w/features)
+     ,@body))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Personalization
+
+(setq hostname (chomp (shell-command-to-string "hostname -s")))
+(setq user-full-name "Shantanu Joshi")
+
+(let ((local-init-file (expand-file-name (concat hostname ".el")
+                                         (concat user-emacs-directory "site-local/"))))
+  (when (file-exists-p local-init-file)
+    (load local-init-file)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Useful packages
 
@@ -231,42 +239,41 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Org Mode customization
-(when (equal "baelrog" hostname)
-  (global-set-key (kbd "C-c a") 'org-agenda)
+(w/featurep
+ 'org-mode
 
-  (require 'org)
+ (require 'org)
 
-  (global-set-key (kbd "C-c a") 'org-agenda)
+ (global-set-key (kbd "C-c a") 'org-agenda)
+ (setq org-agenda-files (list
+                         (expand-file-name "~/src/helpshift/data/helpshift.org")))
 
-  (setq org-agenda-files (list
-                          (expand-file-name "~/src/helpshift/data/helpshift.org")))
+ ;; Set priority range from A to C with default A
+ (setq org-highest-priority ?A)
+ (setq org-lowest-priority ?C)
+ (setq org-default-priority ?A)
 
-  ;; Set priority range from A to C with default A
-  (setq org-highest-priority ?A)
-  (setq org-lowest-priority ?C)
-  (setq org-default-priority ?A)
+ (setq org-log-done t)
 
-  (setq org-log-done t)
+ ;;open agenda in current window
+ (setq org-agenda-window-setup (quote current-window))
 
-  ;;open agenda in current window
-  (setq org-agenda-window-setup (quote current-window))
+ ;;capture todo items using C-c c t
+ (define-key global-map (kbd "C-c c") 'org-capture)
+ (setq org-capture-templates
+       '(("t" "todo" entry (file+headline (expand-file-name "~/src/helpshift/data/helpshift.org")
+                                          "Tasks")
+          "* TODO [#A] %?")))
+ (setq org-todo-keywords '((sequence "TODO" "IN-PROGRESS" "WAITING" "DONE")))
 
-  ;;capture todo items using C-c c t
-  (define-key global-map (kbd "C-c c") 'org-capture)
-  (setq org-capture-templates
-        '(("t" "todo" entry (file+headline (expand-file-name "~/src/helpshift/data/helpshift.org")
-                                           "Tasks")
-           "* TODO [#A] %?")))
-  (setq org-todo-keywords '((sequence "TODO" "IN-PROGRESS" "WAITING" "DONE")))
+ ;; Disable ligatures in org mode - fonts with ligatures crash emacs
+ ;; when an org file is opened
+ (add-hook 'org-mode-hook 'disable-auto-composition)
 
-  ;; Disable ligatures in org mode - fonts with ligatures crash emacs
-  ;; when an org file is opened
-  (add-hook 'org-mode-hook 'disable-auto-composition)
-
-  (use-package org-bullets
-    :ensure t
-    :custom (org-bullets-bullet-list '("◉" "◆" "✜" "▶"))
-    :hook (org-mode . org-bullets-mode)))
+ (use-package org-bullets
+   :ensure t
+   :custom (org-bullets-bullet-list '("◉" "◆" "✜" "▶"))
+   :hook (org-mode . org-bullets-mode)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Appearance
@@ -292,43 +299,55 @@
 
 ;; Fonts
 
+;; default font size - overridden in local.el
+(defvar font-size 140)
+
 (use-package unicode-fonts
   :ensure t
   :config (unicode-fonts-setup))
 
 ;; Default font
-(if (equal hostname "baelrog")
-    (progn
-      (set-face-attribute 'default nil :font "Fira Code Retina" :height 140)
-      (let ((alist '((33 . ".\\(?:\\(?:==\\|!!\\)\\|[!=]\\)")
-                     (35 . ".\\(?:###\\|##\\|_(\\|[#(?[_{]\\)")
-                     (36 . ".\\(?:>\\)")
-                     (37 . ".\\(?:\\(?:%%\\)\\|%\\)")
-                     (38 . ".\\(?:\\(?:&&\\)\\|&\\)")
-                     (42 . ".\\(?:\\(?:\\*\\*/\\)\\|\\(?:\\*[*/]\\)\\|[*/>]\\)")
-                     (43 . ".\\(?:\\(?:\\+\\+\\)\\|[+>]\\)")
-                     (45 . ".\\(?:\\(?:-[>-]\\|<<\\|>>\\)\\|[<>}~-]\\)")
-                     (46 . ".\\(?:\\(?:\\.[.<]\\)\\|[.=-]\\)")
-                     (47 . ".\\(?:\\(?:\\*\\*\\|//\\|==\\)\\|[*/=>]\\)")
-                     (48 . ".\\(?:x[a-zA-Z]\\)")
-                     (58 . ".\\(?:::\\|[:=]\\)")
-                     (59 . ".\\(?:;;\\|;\\)")
-                     (60 . ".\\(?:\\(?:!--\\)\\|\\(?:~~\\|->\\|\\$>\\|\\*>\\|\\+>\\|--\\|<[<=-]\\|=[<=>]\\||>\\)\\|[*$+~/<=>|-]\\)")
-                     (61 . ".\\(?:\\(?:/=\\|:=\\|<<\\|=[=>]\\|>>\\)\\|[<=>~]\\)")
-                     (62 . ".\\(?:\\(?:=>\\|>[=>-]\\)\\|[=>-]\\)")
-                     (63 . ".\\(?:\\(\\?\\?\\)\\|[:=?]\\)")
-                     (91 . ".\\(?:]\\)")
-                     (92 . ".\\(?:\\(?:\\\\\\\\\\)\\|\\\\\\)")
-                     (94 . ".\\(?:=\\)")
-                     (119 . ".\\(?:ww\\)")
-                     (123 . ".\\(?:-\\)")
-                     (124 . ".\\(?:\\(?:|[=|]\\)\\|[=>|]\\)")
-                     (126 . ".\\(?:~>\\|~~\\|[>=@~-]\\)"))))
-        (dolist (char-regexp alist)
-          (set-char-table-range composition-function-table (car char-regexp)
-                                `([,(cdr char-regexp) 0 font-shape-gstring])))
-        (set-frame-font "Fira Code Retina" nil t)))
-  (set-face-attribute 'default nil :font "Iosevka" :height 125))
+(w/featurep
+ 'fira-code
+
+ (set-face-attribute 'default nil :font "Fira Code Retina" :height font-size)
+ (set-frame-font "Fira Code Retina" nil t)
+ (w/featurep 'fira-code-ligatures
+
+             (let ((alist '((33 . ".\\(?:\\(?:==\\|!!\\)\\|[!=]\\)")
+                            (35 . ".\\(?:###\\|##\\|_(\\|[#(?[_{]\\)")
+                            (36 . ".\\(?:>\\)")
+                            (37 . ".\\(?:\\(?:%%\\)\\|%\\)")
+                            (38 . ".\\(?:\\(?:&&\\)\\|&\\)")
+                            (42 . ".\\(?:\\(?:\\*\\*/\\)\\|\\(?:\\*[*/]\\)\\|[*/>]\\)")
+                            (43 . ".\\(?:\\(?:\\+\\+\\)\\|[+>]\\)")
+                            (45 . ".\\(?:\\(?:-[>-]\\|<<\\|>>\\)\\|[<>}~-]\\)")
+                            (46 . ".\\(?:\\(?:\\.[.<]\\)\\|[.=-]\\)")
+                            (47 . ".\\(?:\\(?:\\*\\*\\|//\\|==\\)\\|[*/=>]\\)")
+                            (48 . ".\\(?:x[a-zA-Z]\\)")
+                            (58 . ".\\(?:::\\|[:=]\\)")
+                            (59 . ".\\(?:;;\\|;\\)")
+                            (60 . ".\\(?:\\(?:!--\\)\\|\\(?:~~\\|->\\|\\$>\\|\\*>\\|\\+>\\|--\\|<[<=-]\\|=[<=>]\\||>\\)\\|[*$+~/<=>|-]\\)")
+                            (61 . ".\\(?:\\(?:/=\\|:=\\|<<\\|=[=>]\\|>>\\)\\|[<=>~]\\)")
+                            (62 . ".\\(?:\\(?:=>\\|>[=>-]\\)\\|[=>-]\\)")
+                            (63 . ".\\(?:\\(\\?\\?\\)\\|[:=?]\\)")
+                            (91 . ".\\(?:]\\)")
+                            (92 . ".\\(?:\\(?:\\\\\\\\\\)\\|\\\\\\)")
+                            (94 . ".\\(?:=\\)")
+                            (119 . ".\\(?:ww\\)")
+                            (123 . ".\\(?:-\\)")
+                            (124 . ".\\(?:\\(?:|[=|]\\)\\|[=>|]\\)")
+                            (126 . ".\\(?:~>\\|~~\\|[>=@~-]\\)"))))
+               (dolist (char-regexp alist)
+                 (set-char-table-range composition-function-table (car char-regexp)
+                                       `([,(cdr char-regexp) 0 font-shape-gstring])))
+               (add-hook 'c-mode-common-hook 'disable-auto-composition))))
+
+(w/featurep
+ 'iosevka
+
+ (set-face-attribute 'default nil :font "Iosevka" :height font-size)
+ (set-frame-font "Iosevka" nil t))
 
 
 ;; Smart modeline
@@ -382,7 +401,6 @@
   :custom
   (python-indent-offset 4))
 
-;; Company mode - autocompletion
 (use-package company
   :ensure t
   :defer t
@@ -392,14 +410,12 @@
   (company-tooltip-align-annotations t)
   (company-minimum-prefix-length 3))
 
-;; Python mode
 (use-package anaconda-mode
   :ensure t
   :diminish anaconda-mode
   :hook python-mode
   :custom (python-indent-offset 4))
 
-;; completion for Python mode using anaconda
 (use-package company-anaconda
   :ensure t
   :after (company anaconda-mode)
@@ -407,13 +423,12 @@
                     (lambda () (add-to-list 'company-backends 'company-anaconda))))
 
 
-;; Clojure
-(when (equal "baelrog" hostname)
+(w/featurep
+ 'clojure
 
-  (use-package clojure-mode
+ (use-package clojure-mode
    :ensure t)
 
- ;; Clojure CIDER mode
  (use-package cider
    :ensure t
    :after clojure-mode
@@ -432,7 +447,7 @@
                :map cider-mode-map
                ("C-C M-n" . cider-repl-set-ns))))
 
-;; paredit
+
 (use-package paredit
   :ensure t
   :diminish paredit-mode
@@ -449,102 +464,102 @@
               ("M-[" . paredit-wrap-square)
               ("M-{" . paredit-wrap-curly)))
 
-;; Common Lisp
 
-(when (and (equal "fenrir" hostname)
-           (file-exists-p (expand-file-name "~/.quicklisp/slime-helper.el")))
+(w/featurep
+ 'common-lisp
 
- (load (expand-file-name "~/.quicklisp/slime-helper.el"))
- (setq inferior-lisp-program "/usr/local/bin/sbcl --no-linedit")
- (eval-after-load "slime"
-   '(progn
-      (slime-setup '(slime-fancy
-                     slime-fancy-inspector
-                     slime-asdf
-                     slime-indentation
-                     slime-fontifying-fu))
-      (setq slime-complete-symbol-function 'slime-fuzzy-complete-symbol
-            slime-fuzzy-completion-in-place nil
-            slime-complete-symbol*-fancy t
-            slime-net-coding-system 'utf-8-unix)
-      (slime-autodoc-mode)
-      (add-hook 'slime-mode-hook
-                (lambda ()
-                  (set-variable lisp-indent-function 'common-lisp-indent-function)))
-      ;; Point slime to local copy of HyperSpec
-      (load (expand-file-name "~/.quicklisp/clhs-use-local.el") t))))
+ (when (file-exists-p (expand-file-name "~/.quicklisp/slime-helper.el"))
 
-
-;; Haskell mode
-(use-package haskell-mode
-  :ensure t
-  :bind (:map haskell-mode-map
-              ("C-c C-l" . haskell-process-load-or-reload-promp)
-              ("C-c C-z" . haskell-interactive-switch))
-  :config
-  (require 'haskell-interactive-mode)
-  (require 'haskell-process)
-  :init ;; these are not custom variables
-  (setq haskell-process-suggest-remove-import-lines t
-        haskell-process-auto-import-loaded-modules t
-        haskell-process-log t
-        haskell-indentation-electric-flag t
-        haskell-process-args-stack-ghci '("--ghci-options=-ferror-spans -fshow-loaded-modules")))
-
-(use-package company-ghc
-  :ensure t
-  :custom (company-ghc-show-info t)
-  :config (add-to-list 'company-backends 'company-ghc))
-
-(use-package intero
-  :ensure t
-  :hook (haskell-mode . intero-mode))
+   (load (expand-file-name "~/.quicklisp/slime-helper.el"))
+   (setq inferior-lisp-program "/usr/local/bin/sbcl --no-linedit")
+   (eval-after-load "slime"
+     '(progn
+        (slime-setup '(slime-fancy
+                       slime-fancy-inspector
+                       slime-asdf
+                       slime-indentation
+                       slime-fontifying-fu))
+        (setq slime-complete-symbol-function 'slime-fuzzy-complete-symbol
+              slime-fuzzy-completion-in-place nil
+              slime-complete-symbol*-fancy t
+              slime-net-coding-system 'utf-8-unix)
+        (slime-autodoc-mode)
+        (add-hook 'slime-mode-hook
+                  (lambda ()
+                    (set-variable lisp-indent-function 'common-lisp-indent-function)))
+        ;; Point slime to local copy of HyperSpec
+        (load (expand-file-name "~/.quicklisp/clhs-use-local.el") t)))))
 
 
-;; YAML mode
+(w/featurep
+ 'haskell
+
+ (use-package haskell-mode
+   :ensure t
+   :bind (:map haskell-mode-map
+               ("C-c C-l" . haskell-process-load-or-reload-promp)
+               ("C-c C-z" . haskell-interactive-switch))
+   :config
+   (require 'haskell-interactive-mode)
+   (require 'haskell-process)
+   :init ;; these are not custom variables
+   (setq haskell-process-suggest-remove-import-lines t
+         haskell-process-auto-import-loaded-modules t
+         haskell-process-log t
+         haskell-indentation-electric-flag t
+         haskell-process-args-stack-ghci '("--ghci-options=-ferror-spans -fshow-loaded-modules")))
+
+ (use-package company-ghc
+   :ensure t
+   :custom (company-ghc-show-info t)
+   :config (add-to-list 'company-backends 'company-ghc))
+
+ (use-package intero
+   :ensure t
+   :hook (haskell-mode . intero-mode)))
+
+
 (use-package yaml-mode
   :ensure t
   :defer t
   :bind (:map yaml-mode-map ("C-m" . newline-and-indent)))
 
-(add-hook 'c-mode-common-hook 'disable-auto-composition)
 
-;; Rust Mode
-(when (file-directory-p (expand-file-name "~/.cargo"))
+(w/featurep
+ 'rust
 
-  (use-package rust-mode
-    :ensure t
-    :config (add-to-list 'exec-path (expand-file-name "~/.cargo/bin")))
+ (when (file-directory-p (expand-file-name "~/.cargo"))
 
-  (use-package cargo
-    :after rust-mode
-    :ensure t
-    :hook (rust-mode . cargo-minor-mode))
+   (use-package rust-mode
+     :ensure t
+     :config (add-to-list 'exec-path (expand-file-name "~/.cargo/bin")))
 
-  (defun racer-setup ()
-    (let ((rust-root (chomp (with-temp-buffer
-                              (call-process "rustc" nil t nil "--print" "sysroot")
-                              (buffer-string)))))
-      (setq racer-rust-src-path (concat rust-root "/lib/rustlib/src/rust/src"))))
+   (use-package cargo
+     :after rust-mode
+     :ensure t
+     :hook (rust-mode . cargo-minor-mode))
 
-  (use-package racer
-    :after rust-mode
-    :ensure t
-    :bind (:map rust-mode-map ("TAB" . company-indent-or-complete-common))
-    :hook ((rust-mode . racer-mode)
-           (racer-mode . eldoc-mode))
-    :config (racer-setup)))
+   (defun racer-setup ()
+     (let ((rust-root (chomp (with-temp-buffer
+                               (call-process "rustc" nil t nil "--print" "sysroot")
+                               (buffer-string)))))
+       (setq racer-rust-src-path (concat rust-root "/lib/rustlib/src/rust/src"))))
 
-;; Golang Mode
-(when (equal "fenrir" hostname)
+   (use-package racer
+     :after rust-mode
+     :ensure t
+     :bind (:map rust-mode-map ("TAB" . company-indent-or-complete-common))
+     :hook ((rust-mode . racer-mode)
+            (racer-mode . eldoc-mode))
+     :config (racer-setup))))
 
- (use-package go-mode
-   :ensure t))
 
-;; CSV mode
-(use-package csv-mode
-  :ensure t
-  :hook (csv-mode . disable-auto-composition))
+(w/featurep
+ 'csv
+
+ (use-package csv-mode
+   :ensure t
+   :hook (csv-mode . disable-auto-composition)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customization
@@ -693,7 +708,8 @@
        (load-file user-init-file)
        (find-file user-init-file))))
 
-(when (equal "baelrog" hostname)
+(w/featurep
+ 'clojure
 
  (defun cider-connect-helper (iport)
    "Helper for connecting to an already running Clojure repl."
