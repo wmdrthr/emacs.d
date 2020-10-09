@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2020-10-09 12:59:23 weemadarthur>
+;; Time-stamp: <2020-10-09 13:09:08 weemadarthur>
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
 ;;  |  __/ | | | | | (_| | (__\__ \
@@ -739,11 +739,16 @@
                                         (insert-file-contents (concat (file-name-as-directory project-dir)
                                                                       ".nrepl-port"))
                                         (buffer-string)))))))
-     (let* ((project-dir (read-directory-name "Project: " "~/src/helpshift/moby" nil nil nil))
+     (let* ((project-dir (projectile-project-root))
             (port (or iport
-                      (read-nrepl-port project-dir)
-                      (read-number "Port: "))))
-       (cider-connect (list :host "localhost" :port port :project-dir project-dir)))))
+                      (read-nrepl-port project-dir))))
+       (if (and project-dir port)
+           (cider-connect (list :host "localhost" :port port :project-dir project-dir))
+         (let* ((project-dir (read-directory-name "Project: " "~/src/helpshift/moby" nil nil nil))
+                (port (or iport
+                          (read-nrepl-port project-dir)
+                          (read-number "Port: "))))
+           (cider-connect (list :host "localhost" :port port :project-dir project-dir)))))))
 
  (bind-key "C-9" 'cider-connect-helper))
 
