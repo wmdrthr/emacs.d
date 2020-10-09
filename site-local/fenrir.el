@@ -4,6 +4,7 @@
 
 (setq w/features
       (append w/features '(iosevka
+                           ligatures
                            common-lisp
                            haskell
                            rust)))
