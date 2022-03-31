@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2020-10-09 13:09:08 weemadarthur>
+;; Time-stamp: <2022-03-31 11:21:51 shantanu>
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
 ;;  |  __/ | | | | | (_| | (__\__ \
@@ -35,6 +35,7 @@
       (replace-match "" nil nil str)))
 
 (add-to-list 'exec-path "/usr/local/bin")
+(add-to-list 'exec-path (expand-file-name "~/bin"))
 (setq default-directory "~/")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -202,7 +203,11 @@
 ;; Persistent scratch buffer
 (use-package persistent-scratch
   :ensure t
-  :config (persistent-scratch-setup-default))
+  :init (persistent-scratch-setup-default)
+  :config
+  (defun persistent-scratch-buffer-p ()
+    (string-match "^*scratch" (buffer-name)))
+  (setq persistent-scratch-scratch-buffer-p-function 'persistent-scratch-buffer-p))
 
 ;; Git integration
 (use-package magit
@@ -655,8 +660,7 @@
            (set-window-buffer w1 b2)
            (set-window-buffer w2 b1)
            (set-window-start w1 s2)
-           (set-window-start w2 s1))))
-  (other-window 1))
+           (set-window-start w2 s1)))))
 (bind-key "C-c s" 'swap-windows)
 
 (defun split-window-vertically-and-switch (&optional size)
@@ -840,11 +844,16 @@ or as a formatted string containing the non-zero components of above list eg. 2d
                                       (buffer-local-variables buf))))))))
 (bind-key "C-x u" 'uptime)
 
-(defun new-temporary-buffer ()
+(defun new-scratch-buffer ()
   "generate and switch to a new temporary buffer"
   (interactive)
-  (switch-to-buffer (generate-new-buffer "untitled")))
-(bind-key "C-c n" 'new-temporary-buffer)
+  (let* ((buffer-name (read-string "Buffer mode: "))
+         (major-mode-name (intern (concat buffer-name "-mode"))))
+    (switch-to-buffer (generate-new-buffer (format "*scratch:%s*" buffer-name)))
+    (when (fboundp major-mode-name)
+      (funcall major-mode-name))))
+(bind-key "C-c n" 'new-scratch-buffer)
+
 
 (when (eq 27 emacs-major-version)
   "Fix for bug in latest emacs version"
