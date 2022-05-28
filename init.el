@@ -586,7 +586,7 @@
      (let ((rust-root (chomp (with-temp-buffer
                                (call-process "rustc" nil t nil "--print" "sysroot")
                                (buffer-string)))))
-       (setq racer-rust-src-path (concat rust-root "/lib/rustlib/src/rust/src"))))
+       (setq racer-rust-src-path (concat rust-root "/lib/rustlib/src/rust/library"))))
 
    (use-package racer
      :after rust-mode
