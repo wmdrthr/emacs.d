@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2022-05-28 12:32:18 shantanu>
+;; Time-stamp: <2022-05-28 12:51:52 shantanu>
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
 ;;  |  __/ | | | | | (_| | (__\__ \
@@ -649,6 +649,15 @@
 ;; Personal dictionary file for ispell
 (setq ispell-personal-dictionary (concat user-emacs-directory "ispell_personal"))
 
+;; Firefox as default browser, Chrome for work related links
+(when (eq system-type 'darwin)
+  (setq browse-url-chrome-program "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+        browse-url-firefox-program "/Applications/Firefox.app/Contents/MacOS/firefox"))
+(setq browse-url-handlers
+      '(("https://helpshift.atlassian.net/\.*" . browse-url-chrome)
+        ("https://gerrit.helpshift.com/\.*" . browse-url-chrome)
+        ("." . browse-url-firefox)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keybindings and useful functions
 
@@ -657,6 +666,15 @@
 (bind-key "M-0"   'delete-window)
 (bind-key "M-]"   'ns-next-frame)
 (bind-key "M-'"   'pop-to-mark-command)
+
+;; Browse url at point when clicking and pressing super
+(global-set-key (kbd "<s-mouse-1>")
+                (lambda (event)
+                  (interactive (list last-command-event))
+                  (posn-set-point (event-end event))
+                  (browse-url (thing-at-point 'url t))))
+
+(global-set-key [(super o)] 'other-frame)
 
 (defalias 'yes-or-no-p 'y-or-n-p)
 
