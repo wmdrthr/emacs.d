@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2022-05-28 12:57:14 shantanu>
+;; Time-stamp: <2022-05-28 13:03:05 shantanu>
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
 ;;  |  __/ | | | | | (_| | (__\__ \
@@ -106,6 +106,11 @@
   :bind ("C-." . idomenu))
 
 ;; rainbow delimiters
+(use-package rainbow-mode
+  :ensure t
+  :diminish rainbow-mode
+  :hook css-mode)
+
 (use-package rainbow-delimiters
   :ensure t
   :hook ((lisp-mode . rainbow-delimiters-mode)
