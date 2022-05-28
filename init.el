@@ -648,6 +648,10 @@
 (show-paren-mode 1)
 (set-face-attribute 'show-paren-match nil :weight 'extra-bold)
 
+;; Show the current match number and the total number of matches in
+;; the search prompt.
+(setq isearch-lazy-count 1)
+
 ;; Personal dictionary file for ispell
 (setq ispell-personal-dictionary (concat user-emacs-directory "ispell_personal"))
 
