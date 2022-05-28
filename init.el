@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2022-05-28 12:51:52 shantanu>
+;; Time-stamp: <2022-05-28 12:57:14 shantanu>
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
 ;;  |  __/ | | | | | (_| | (__\__ \
@@ -612,11 +612,12 @@
 (setq-default indent-tabs-mode nil ;; Indent with spaces instead of tabs
               c-basic-offset 4
               tab-width 4
+              standard-indent 4
               show-trailing-whitespace t
               visible-bell nil
               ring-bell-function 'ignore
               redisplay-dont-pause t ;; don't pause display on input
-              ;; disable bidirectional tetx support for slight performance bonus
+              ;; disable bidirectional text support for slight performance bonus
               bidi-display-reordering nil)
 
 ;; Do not ask for confirmation
@@ -624,6 +625,7 @@
 
 ;; Show trailing whitespace
 (setq-default show-trailing-whitespace t)
+
 ;; Do not show annying menu-bar tips
 (setq suggest-key-bindings nil)
 
@@ -666,6 +668,10 @@
 (bind-key "M-0"   'delete-window)
 (bind-key "M-]"   'ns-next-frame)
 (bind-key "M-'"   'pop-to-mark-command)
+
+;; Indent/De-indent selection by one tab length
+(global-set-key (kbd "s->") 'indent-rigidly-right-to-tab-stop)
+(global-set-key (kbd "s-<") 'indent-rigidly-left-to-tab-stop)
 
 ;; Browse url at point when clicking and pressing super
 (global-set-key (kbd "<s-mouse-1>")
