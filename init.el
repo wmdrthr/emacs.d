@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2022-05-28 13:17:54 shantanu>
+;; Time-stamp: <2022-05-28 13:39:08 shantanu>
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
 ;;  |  __/ | | | | | (_| | (__\__ \
@@ -249,6 +249,43 @@
     ("C-c m p" . mc/mark-previous-like-this)
     ("C-c m s" . mc/mark-sgml-tag-pair)
     ("C-c m d" . mc/mark-all-like-this-in-defun)))
+
+;; Completion at point
+(use-package corfu
+  :ensure t
+  :custom
+  (corfu-auto t)
+  (corfu-auto-prefix 3)
+  (corfu-auto-delay 0)
+  (corfu-echo-documentation 0)
+  (corfu-quit-no-match 'separator)
+  (corfu-preview-current nil)
+  :bind (:map corfu-map
+         ("<escape>" . corfu-quit)
+         ("C-h" . corfu-show-documentation))
+  :init (global-corfu-mode))
+
+;; Vertical ompletion in minibuffer
+(use-package vertico
+  :ensure t
+  :bind (:map vertico-map
+              ("C-j" . vertico-next)
+              ("C-k" . vertico-previous)
+              ("M-j" . vertico-next)
+              ("M-k" . vertico-previous)
+              ("C-f" . vertico-exit)
+              :map minibuffer-local-map
+              ("M-h" . backward-kill-word))
+  :custom
+  (vertico-cycle t)
+  :init
+  (vertico-mode)
+  ;; Grow and shrink the Vertico minibuffer
+  (setq vertico-resize t)
+  ;; Optionally enable cycling for `vertico-next' and `vertico-previous'.
+  (setq vertico-cycle t)
+  :config
+  (vertico-mouse-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Org Mode customization
