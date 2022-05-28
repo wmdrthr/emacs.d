@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2022-03-31 11:21:51 shantanu>
+;; Time-stamp: <2022-05-28 12:32:18 shantanu>
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
 ;;  |  __/ | | | | | (_| | (__\__ \
@@ -219,6 +219,21 @@
   :bind (("C-x g" . magit-status)
          ("C-x M-g" . magit-dispatch-popup)
          ("C-x s-g" . magit-blame-popup)))
+
+
+;; Enhancements to dired
+(use-package all-the-icons
+  :ensure t)
+
+(use-package all-the-icons-dired
+  :ensure t
+  :defer t
+  :diminish all-the-icons-dired-mode
+  :config
+  :hook (dired-mode . (lambda ()
+                        (interactive)
+                        (unless (file-remote-p default-directory)
+                          (all-the-icons-dired-mode)))))
 
 ;; Projectile
 (use-package projectile
