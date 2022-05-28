@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2022-05-28 13:03:05 shantanu>
+;; Time-stamp: <2022-05-28 13:17:54 shantanu>
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
 ;;  |  __/ | | | | | (_| | (__\__ \
@@ -438,6 +438,10 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Programming Modes and Related Packages
+
+(use-package flycheck
+  :ensure t
+  :hook (prog-mode . flycheck-mode))
 
 (use-package python
   :ensure nil
@@ -988,3 +992,7 @@ or as a formatted string containing the non-zero components of above list eg. 2d
 
 (message "» Emacs startup time: %0.5f seconds."
          (time-to-seconds (time-since emacs-load-start-time)))
+
+;; Local Variables:
+;; flycheck-disabled-checkers: (emacs-lisp-checkdoc emacs-lisp)
+;; End:
