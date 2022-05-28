@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2022-05-28 13:39:08 shantanu>
+;; Time-stamp: <2022-05-28 13:53:36 shantanu>
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
 ;;  |  __/ | | | | | (_| | (__\__ \
@@ -655,6 +655,9 @@
               redisplay-dont-pause t ;; don't pause display on input
               ;; disable bidirectional text support for slight performance bonus
               bidi-display-reordering nil)
+
+;; Don't ask for confirmation when opening symlinked file
+(setq vc-follow-symlinks t)
 
 ;; Do not ask for confirmation
 (setq confirm-nonexistent-file-or-buffer nil)
