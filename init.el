@@ -185,16 +185,6 @@
 (use-package ag :ensure t)
 (use-package rg :ensure t)
 
-;; Dumb Jump
-(use-package dumb-jump
-  :ensure t
-  :config
-  (dumb-jump-mode)
-  :init (setq dumb-jump-prefer-searcher 'rg)
-  (unbind-key "C-M-q" dumb-jump-mode-map)
-  :bind (("C-M-g" . dumb-jump-go)
-         ("C-s-q" . dumb-jump-quick-look)))
-
 ;; Smart scan
 (use-package smartscan
   :ensure t
@@ -222,7 +212,7 @@
   :config (use-package magit-blame)
   :custom (git-commit-summary-max-length 72)
   :bind (("C-x g" . magit-status)
-         ("C-x M-g" . magit-dispatch-popup)
+         ("C-x M-g" . magit-dispatch)
          ("C-x s-g" . magit-blame-popup)))
 
 
