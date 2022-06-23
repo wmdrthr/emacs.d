@@ -1,11 +1,12 @@
-;;; ligature.el --- display typographical ligatures in major modes  -*- lexical-binding: t; -*-
+;;; ligature.el --- Display typographical ligatures in major modes  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2020  Mickey Petersen
 
 ;; Author: Mickey Petersen <mickey@masteringemacs.org>
+;; Version: 1.0
 ;; Keywords: tools faces
 ;; Homepage: https://www.github.com/mickeynp/ligature.el
-;; Package-Requires: ((emacs "27.1"))
+;; Package-Requires: ((emacs "28"))
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
 ;; the Free Software Foundation, either version 3 of the License, or
@@ -28,6 +29,10 @@
 ;; For this to work, you must meet several criteria:
 ;;
 ;;  1. You must use Emacs 27.1 or later;
+;;
+;;     WARNING: Some issues report crash issues with Emacs versions
+;;              Emacs 27.1. This is fixed in an upstream version
+;;              currently only available in the master branch.
 ;;
 ;;  2. Your Emacs must be built with Harfbuzz enabled -- this is the
 ;;     default as of Emacs 27.1, but obscure platforms may not support
@@ -80,26 +85,27 @@
 ;;                                        "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
 ;;                                        "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
 ;;                                        "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
-;;                                        "\\" "://"))
+;;                                        "\\\\" "://"))
 ;;   ;; Enables ligature checks globally in all buffers.  You can also do it
 ;;   ;; per mode with `ligature-mode'.
 ;;   (global-ligature-mode t))
 ;;
-;; The example above registers a couple of ligatures (they only appear
-;; *if* your font supports them!) against `html-mode', a built-in
-;; mode; and `web-mode', a third-party mode.  It also enables all known
-;; `Cascadia Code' ligatures against `prog-mode', and one ligature
-;; (`www') against every known major mode.
 ;;
-;; Please note, that for complex cases -- such as variadic ligature
-;; support, like the arrows in the Fira Code font -- you must amend
-;; the `ligature-composition-table' directly, as
-;; `ligature-set-ligatures' only supports simple strings.
+;; EXAMPLES
+;; --------
 ;;
-;; The command `ligature-generate-ligatures' does all the hard work of
-;; making the ligatures you configured in the `:config' section
-;; work.  To activate ligatures put `ligature-mode' or
-;; `global-ligature-mode' after you configure the ligatures you want.
+;; Map two ligatures in `web-mode' and `html-mode'.  As they are simple
+;; (meaning, they do not require complex regular expressions to ligate
+;; properly) using their simplified string forms is enough:
+;;
+;;
+;;
+;; This example creates regexp ligatures so that `=' matches against
+;; zero-or-more of `=' characters that may or may not optionally end
+;; with `>' or `<'.
+;;
+;; (ligature-set-ligatures 'markdown-mode `(("=" ,(rx (+ "=") (? (| ">" "<"))))
+;;                                          ("-" ,(rx (+ "-")))))
 ;;
 ;; LIMITATIONS
 ;; -----------
@@ -124,6 +130,19 @@
 
 (require 'cl-lib)
 
+(defgroup ligature nil
+  "Typographic Ligatures in Emacs."
+  :group 'faces
+  :prefix "ligature-")
+
+(defcustom ligature-ignored-major-modes '(minibuffer-inactive-mode)
+  "Major modes that will never have ligatures applied to them.
+
+Unlike `ligature-generate-ligatures' the ignored major modes are
+only checked when the minor mode command `ligature-mode' is enabled."
+  :type '(repeat symbol)
+  :group 'ligature)
+
 (defvar ligature-composition-table nil
   "Alist of ligature compositions.
 
@@ -133,60 +152,98 @@ of (STR-CHAR . LIGATURE-PATTERN) and MODES is either:
 
   a. A major mode, such as `prog-mode' or `c-mode';
 
-  b. A list of major modes, such as `(prog-mode c-mode)';
+  b. A list of major modes;
 
-  c. The value `t', indicating the associated ligature mappings
+  c. The value t, indicating the associated ligature mappings
   must apply to _all_ modes, even internal ones.
 
 A STR-CHAR is a string consisting of a _single_ character that
-defines the beginning of a ligature. The LIGATURE-PATTERN is a
+defines the beginning of a ligature.  The LIGATURE-PATTERN is a
 regexp that should match all the various ligatures that start
-with STR-CHAR. For instance, `!' as a STR-CHAR may have a two
+with STR-CHAR.  For instance, `!' as a STR-CHAR may have a two
 ligatures `=' and `==' that together form `!=' and `!=='.")
 
 ;;;###autoload
 (defun ligature-set-ligatures (modes ligatures)
   "Replace LIGATURES in MODES.
 
-Converts a list of ligatures, in simplified string format, to
-MODES.  As there is no easy way of computing which ligatures
-were already defined, this function will replace any existing
-ligature definitions in `ligature-composition-table' with
-LIGATURES for MODES.
+Converts a list of LIGATURES, where each element is either a cons
+cell of `(STR-CHAR . REGEXP)' or a string to ligate, for all
+modes in MODES.  As there is no easy way of computing which
+ligatures were already defined, this function will replace any
+existing ligature definitions in `ligature-composition-table'
+with LIGATURES for MODES.
 
-Example:
 
-  (ligature-set-ligatures '(web-mode html-mode) '(\"<!--\" \"-->\"))
+Some ligatures are variable-length, such as arrows and borders,
+and need a regular expression to accurately represent the range
+of characters needed to ligate them.  In that case, you must use a
+cons cell of `(STR-CHAR . REGEXP)' where `STR-CHR' is the first
+character in the ligature and `REGEXP' is a regular expression
+that matches the _rest_ of the ligature range.
 
-Adds support for the ligatures `<!--' and `-->' to `web-mode', a
-third-party major mode; and `html-mode', a built-in major
-mode. Note, however, that any existing ligature entries that
-start with `<' or `-' are replaced.
-
-LIGATURES grouped by the first character of each entry and
-passed, untouched, to `regexp-opt' to be turned into a regular
-expression that will match against ligatures beginning with that
-first character."
+For examples, see the commentary in `ligature.el'."
   (let (grouped-ligatures)
     (dolist (ligature ligatures)
-      (let ((key (substring ligature 0 1)))
-        (push (substring ligature 1) (alist-get key grouped-ligatures nil nil #'equal))))
+      (cond
+       ;; the simplest case - we have a string we wish to ligate
+       ((stringp ligature)
+        (if (< (length ligature) 2)
+            (error "Ligature `%s' must be 2 characters or longer" ligature)
+          (let ((str-char (substring ligature 0 1)))
+            (push (list 'literal (substring ligature 1))
+                  (alist-get str-char grouped-ligatures nil nil #'equal)))))
+       ;; cons of (STR-CHAR . REGEXP) where STR-CHR must be 1 char long
+       ((consp ligature)
+        (let ((str-char (car ligature))
+              (ligature-regexp (cadr ligature)))
+          (unless (= (length str-char) 1)
+            (error "Ligature cons cell has a str-char of `%s' but must be a \
+string of a single character" str-char))
+          (push (list 'regex
+                      ;; we can supply either a regexp string _or_ an unexpanded `rx' macro.
+                      (if (stringp ligature-regexp) ligature-regexp
+                        (macroexpand ligature-regexp)))
+                (alist-get str-char grouped-ligatures nil nil #'equal))))))
+    ;; given a grouped alist of ligatures, we enumerate each group and
+    ;; update the `ligature-composition-table'.
     (dolist (group grouped-ligatures)
-      (setf (alist-get (car group)
-                       (alist-get modes ligature-composition-table nil 'remove #'equal) nil 'remove #'equal)
-            (regexp-opt (cdr group))))))
+      ;; Sort the grouped ligatures - containing lists of either
+      ;; `literal' or `regex' as the car of the type of atom in the
+      ;; cdr - as we want the literal matchers _after_ the regex
+      ;; matchers. It's likely the regex matchers supercede anything
+      ;; the literal matchers may encapsulate, so we must ensure they
+      ;; are checked first.
+      (let ((regexp-matchers (cl-remove-if (apply-partially #'equal 'literal) (cdr group) :key #'car))
+            ;; Additionally we need to ditch the `literal' symbol (and
+            ;; just keep the cdr, which is the string literal), even
+            ;; though it's a legitimate `rx' form, because `(group (|
+            ;; (literal "a") (literal "aa") ...)' will NOT yield the
+            ;; same automatic grouping of shortest-to-longest matches
+            ;; like the canonical version that does _not_ use literal.
+            (literal-matchers (mapcan 'cdr (cl-remove-if (apply-partially #'equal 'regex) (cdr group) :key #'car))))
+        (setf (alist-get (car group)
+                         (alist-get modes ligature-composition-table nil 'remove #'equal) nil 'remove #'equal)
+              (macroexpand `(rx (|
+                                 ;; `rx' does not like nils so we have
+                                 ;; to filter them
+                                 ;; manually. Furthermore, we prefer
+                                 ;; regexp to literal matches and want
+                                 ;; them to appear first.
+                                 ,@(cl-remove-if 'null (list (if regexp-matchers `(group (| ,@regexp-matchers)) nil)
+                                                             (if literal-matchers `(group (| ,@literal-matchers)) nil)))))))))))
 
 ;;;###autoload
 (defun ligature-generate-ligatures ()
-  "Generate mode-specific character tables for ligatures.
+  "Ligate the current buffer using its major mode to determine ligature set.
 
 The ligature generator traverses `ligature-composition-table' and
-applies every ligature definition from every mode that is a
-`derived-mode-p' of the current major mode.  That means
-`prog-mode' will likely match most programming major modes that
-define their parent as `prog-mode'.
+applies every ligature definition from every mode that matches
+either t (indicating that a ligature mapping always applies);
+or a major mode or list of major mode symbols that are
+`derived-mode-p' of the current buffer's major mode.
 
-The changes are then made local to the current buffer."
+The changes are then made buffer-local."
   (interactive)
   (let ((table (make-char-table nil)))
     (dolist (ligature-table ligature-composition-table)
@@ -194,10 +251,9 @@ The changes are then made local to the current buffer."
             (rules (cdr ligature-table))) ; alist of rules mapping a character to a regexp.
         ;; If `mode' is t we always apply the rules, regardless of
         ;; whether `derived-mode-p' matches or not.
-        (when (or (booleanp modes) (cl-remove-if 'null (mapcar 'derived-mode-p
-                                                            (if (listp modes)
-                                                                modes
-                                                              (list modes)))))
+        (when (or (eq modes t) (cl-some #'derived-mode-p (if (listp modes)
+                                                             modes
+                                                           (list modes))))
           (dolist (rule rules)
             (set-char-table-range table (string-to-char (car rule))
                                   ;; in order for Emacs to properly
@@ -212,16 +268,24 @@ The changes are then made local to the current buffer."
     (setq-local composition-function-table table)))
 
 ;;;###autoload
-(define-minor-mode ligature-mode "Enables typographic ligatures" nil nil nil
-  (if ligature-mode
-      (ligature-generate-ligatures)
-    (setq-local composition-function-table (default-value 'composition-function-table))))
+(define-minor-mode ligature-mode "Enables typographic ligatures."
+  :init-value nil :lighter nil :keymap nil
+  (if (= emacs-major-version 27)
+      (warn "ligature-mode is currently broken in emacs `%s' due to a bug in
+Emacs's core. For more information have a look at this ISSUE:
+https://gjithub.com/mickeynp/ligature.el/issues/28."
+            emacs-major-version)
+    (if (not ligature-mode)
+        (setq-local composition-function-table (default-value 'composition-function-table))
+      (unless (memq major-mode ligature-ignored-major-modes)
+        (ligature-generate-ligatures)))))
 
-(defun turn-on-ligature-mode ()
+(defun ligature-mode-turn-on ()
   "Turn on command `ligature-mode'."
   (ligature-mode t))
 
-(define-globalized-minor-mode global-ligature-mode ligature-mode turn-on-ligature-mode)
+;;;###autoload
+(define-globalized-minor-mode global-ligature-mode ligature-mode ligature-mode-turn-on)
 
 
 (provide 'ligature)
