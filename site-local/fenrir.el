@@ -1,13 +1,14 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2020-10-09 12:48:21 weemadarthur>
+;; Time-stamp: <2022-07-06 21:06:18 weemadarthur>
 
 (setq w/features
       (append w/features '(iosevka
                            ligatures
-                           common-lisp
-                           haskell
-                           rust)))
+                           ;common-lisp
+                           ;haskell
+                           rust
+                           )))
 
-(defvar font-size 125)
+(defvar font-size 140)
 

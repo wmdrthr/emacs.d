@@ -627,26 +627,21 @@
 
    (use-package rust-mode
      :ensure t
-     :config (add-to-list 'exec-path (expand-file-name "~/.cargo/bin")))
+     :after (lsp-mode lsp-ui)
+     :config (add-to-list 'exec-path (expand-file-name "~/.cargo/bin"))
+     :custom
+     (lsp-rust-analyzer-server-display-inlay-hints t)
+     (lsp-rust-analyzer-display-lifetime-elision-hints-enable "skip_trivial")
+     (lsp-rust-analyzer-display-chaining-hints t)
+     (lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names nil)
+     (lsp-rust-analyzer-display-closure-return-type-hints t)
+     (lsp-rust-analyzer-display-parameter-hints nil)
+     (lsp-rust-analyzer-display-reborrow-hints nil))
 
    (use-package cargo
      :after rust-mode
      :ensure t
-     :hook (rust-mode . cargo-minor-mode))
-
-   (defun racer-setup ()
-     (let ((rust-root (chomp (with-temp-buffer
-                               (call-process "rustc" nil t nil "--print" "sysroot")
-                               (buffer-string)))))
-       (setq racer-rust-src-path (concat rust-root "/lib/rustlib/src/rust/library"))))
-
-   (use-package racer
-     :after rust-mode
-     :ensure t
-     :bind (:map rust-mode-map ("TAB" . company-indent-or-complete-common))
-     :hook ((rust-mode . racer-mode)
-            (racer-mode . eldoc-mode))
-     :config (racer-setup))))
+     :hook (rust-mode . cargo-minor-mode))))
 
 
 (w/featurep
