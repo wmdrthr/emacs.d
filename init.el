@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2022-06-12 12:51:15 weemadarthur>
+;; Time-stamp: <2022-07-06 21:03:59 weemadarthur>
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
 ;;  |  __/ | | | | | (_| | (__\__ \
@@ -36,6 +36,7 @@
 
 (add-to-list 'exec-path "/usr/local/bin")
 (add-to-list 'exec-path (expand-file-name "~/bin"))
+(add-to-list 'exec-path (expand-file-name "~/.local/bin"))
 (setq default-directory "~/")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -472,31 +473,49 @@
   :ensure t
   :hook (prog-mode . flycheck-mode))
 
-(use-package python
-  :ensure nil
-  :custom
-  (python-indent-offset 4))
+(defun w/lsp-deferred-if-supported ()
+  "Run lsp-deferred if it's a supported mode"
+  (unless (derived-mode-p 'emacs-lisp-mode)
+    (lsp-deferred)))
 
-(use-package company
+(use-package lsp-mode
   :ensure t
-  :defer t
-  :diminish company-mode
-  :config (global-company-mode)
-  :custom
-  (company-tooltip-align-annotations t)
-  (company-minimum-prefix-length 3))
+  :init
+  (setq lsp-keymap-prefix "C-c l")
+  :hook (prog-mode . w/lsp-deferred-if-supported)
+  :config
+  (add-to-list 'lsp-file-watch-ignored "[/\\\\]\\venv\\'" )
+  (setq lsp-completion-show-kind nil)
+  (setq lsp-enable-snippet nil)
+  :commands lsp)
 
-(use-package anaconda-mode
+(use-package lsp-ui
   :ensure t
-  :diminish anaconda-mode
-  :hook python-mode
-  :custom (python-indent-offset 4))
+  :commands lsp-ui-mode
+  :config
+  (setq lsp-ui-doc-enable nil)
+  (setq lsp-ui-doc-header t)
+  (setq lsp-ui-doc-include-signature t)
+  (setq lsp-ui-doc-border (face-foreground 'default))
+  (setq lsp-ui-sideline-show-code-actions t)
+  (setq lsp-ui-sideline-delay 0.05))
 
-(use-package company-anaconda
-  :ensure t
-  :after (company anaconda-mode)
-  :config (add-hook 'python-mode-hook
-                    (lambda () (add-to-list 'company-backends 'company-anaconda))))
+
+(w/featurep
+ 'python
+
+ (use-package python
+   :ensure nil
+   :custom
+   (python-indent-offset 4))
+
+ (use-package pyvenv
+   :ensure t)
+
+ (use-package lsp-pyright
+   :ensure t
+   :hook (python-mode . (lambda ()
+                          (require 'lsp-pyright)))))
 
 
 (w/featurep
