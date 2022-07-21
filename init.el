@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2022-07-06 21:03:59 weemadarthur>
+;; Time-stamp: <2022-07-08 00:17:14 weemadarthur>
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
 ;;  |  __/ | | | | | (_| | (__\__ \
@@ -651,6 +651,11 @@
    :ensure t
    :hook (csv-mode . disable-auto-composition)))
 
+
+(use-package markdown-mode
+  :ensure t
+  :defer t)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customization
 
@@ -681,7 +686,7 @@
 ;; Show trailing whitespace
 (setq-default show-trailing-whitespace t)
 
-;; Do not show annying menu-bar tips
+;; Do not show annoying menu-bar tips
 (setq suggest-key-bindings nil)
 
 ;; Make default mode Emacs lisp mode
