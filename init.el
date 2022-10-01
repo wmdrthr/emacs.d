@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2022-07-08 00:17:14 weemadarthur>
+;; Time-stamp: <2022-09-09 21:25:14 weemadarthur>
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
 ;;  |  __/ | | | | | (_| | (__\__ \
@@ -474,19 +474,28 @@
   :hook (prog-mode . flycheck-mode))
 
 (defun w/lsp-deferred-if-supported ()
-  "Run lsp-deferred if it's a supported mode"
-  (unless (derived-mode-p 'emacs-lisp-mode)
+  "Run lsp-deferred only if it's a supported mode"
+  (unless (derived-mode-p 'emacs-lisp-mode 'clojure-mode 'sql-mode)
     (lsp-deferred)))
 
 (use-package lsp-mode
   :ensure t
-  :init
-  (setq lsp-keymap-prefix "C-c l")
-  :hook (prog-mode . w/lsp-deferred-if-supported)
   :config
-  (add-to-list 'lsp-file-watch-ignored "[/\\\\]\\venv\\'" )
+  (add-to-list 'lsp-file-watch-ignored "[/\\\\]\\.venv\\'")
+  (add-to-list 'lsp-file-watch-ignored "[/\\\\]\\venv\\'")
+  (add-to-list 'lsp-file-watch-ignored "[/\\\\]\\.git\\'")
   (setq lsp-completion-show-kind nil)
   (setq lsp-enable-snippet nil)
+  :custom
+  (lsp-completion-provider :none)
+  :init
+  (setq lsp-keymap-prefix "C-c l")
+  (defun w/lsp-mode-setup-completion ()
+    (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
+          '(flex)))
+  :hook
+  (prog-mode . w/lsp-deferred-if-supported)
+  (lsp-completion-mode . w/lsp-mode-setup-completion)
   :commands lsp)
 
 (use-package lsp-ui
