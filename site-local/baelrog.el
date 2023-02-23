@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; local.el
-;; Time-stamp: <2021-05-05 16:02:51 shantanu>
+;; Time-stamp: <2022-11-28 11:47:23 shantanu>
 
 (setq user-mail-address "shantanu@helpshift.com")
 
@@ -12,3 +12,6 @@
                            clojure)))
 
 ;(push 'fira-code-ligatures packages)
+
+
+(add-to-list 'exec-path "/opt/homebrew/bin")
