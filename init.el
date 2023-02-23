@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2023-02-23 15:38:28 shantanu>
+;; Time-stamp: <2023-02-23 15:45:05 shantanu>
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
 ;;  |  __/ | | | | | (_| | (__\__ \
@@ -562,6 +562,8 @@
          (ielm-mode . enable-paredit-mode)
          (json-mode . enable-paredit-mode))
   :bind (:map paredit-mode-map
+              ("RET" . nil)
+              ("C-j" . paredit-newline)
               ("M-)" . paredit-forward-slurp-sexp)
               ("M-(" . paredit-wrap-round)
               ("M-[" . paredit-wrap-square)
