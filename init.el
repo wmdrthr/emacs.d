@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2022-09-09 21:25:14 weemadarthur>
+;; Time-stamp: <2023-02-23 15:38:28 shantanu>
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
 ;;  |  __/ | | | | | (_| | (__\__ \
@@ -62,10 +62,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Personalization
 
-(setq hostname (chomp (shell-command-to-string "hostname -s")))
 (setq user-full-name "Shantanu Joshi")
 
-(let ((local-init-file (expand-file-name (concat hostname ".el")
+(let ((local-init-file (expand-file-name "local.el"
                                          (concat user-emacs-directory "site-local/"))))
   (when (file-exists-p local-init-file)
     (load local-init-file)))
