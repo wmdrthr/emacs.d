@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2023-02-23 15:46:57 shantanu>
+;; Time-stamp: <2023-02-23 15:59:44 shantanu>
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
 ;;  |  __/ | | | | | (_| | (__\__ \
@@ -334,15 +334,24 @@
           (funcall mode -1)))
       '(menu-bar-mode tool-bar-mode scroll-bar-mode))
 
-;; Theme
+;; Theme - the Doom One theme is the default, but ensure some other
+;; themes are available
+
+(use-package nord-theme
+  :ensure t)
+
+(use-package dracula-theme
+  :ensure t)
+
 (use-package doom-themes
   :ensure t
   :config
-  (load-theme 'doom-one)
+  (load-theme 'doom-one t)
   (doom-themes-org-config)
   (custom-theme-set-faces
    'doom-one
    '(outline-1 ((t (:height 1.1 :foreground "#51afef" :weight semi-bold))))))
+
 
 ;; Display time in the toolbar
 (display-time-mode 1)
