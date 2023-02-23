@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2023-02-23 15:45:05 shantanu>
+;; Time-stamp: <2023-02-23 15:46:57 shantanu>
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
 ;;  |  __/ | | | | | (_| | (__\__ \
@@ -156,7 +156,7 @@
 (use-package backup-each-save
   :load-path "site-local/"
   :init (setq make-backup-files nil)    ; disable standard backups
-  :hook after-save
+  :hook (after-save . backup-each-save)
   :config ;; these are not custom variables
   (setq backup-each-save-mirror-location "~/.emacs.d/backups")
   (setq backup-each-save-time-format "%Y_%m_%d_%H_%M")
@@ -529,8 +529,14 @@
 (w/featurep
  'clojure
 
+ (use-package flycheck-clj-kondo
+   :ensure t
+   :custom
+   (flycheck-highlighting-mode 'sexps))
+
  (use-package clojure-mode
-   :ensure t)
+   :ensure t
+   :config (require 'flycheck-clj-kondo))
 
  (use-package cider
    :ensure t
