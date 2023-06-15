@@ -167,10 +167,13 @@
   :custom
   (recentf-save-file "~/.emacs.d/.recentf")
   (recentf-max-menu-items 15)
-  (recentf-max-saved-items 50)
-  (recentf-auto-cleanup 300) ;; every 5 minutes
+  (recentf-max-saved-items 15)
   (recentf-filename-handlers '(abbreviate-file-name))
-  :config (recentf-mode 1)
+  :config
+  (recentf-mode 1)
+  (run-at-time nil (* 9 60) (lambda ()
+                              (recentf-cleanup)
+                              (recentf-save-list)))
   :bind ("C-c r" . recentf-open-files))
 
 (use-package avy
