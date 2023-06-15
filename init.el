@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2023-02-23 15:59:44 shantanu>
+;; Time-stamp: <2023-06-15 20:21:41 shantanu>
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
 ;;  |  __/ | | | | | (_| | (__\__ \
@@ -333,6 +333,12 @@
         (when (fboundp mode)
           (funcall mode -1)))
       '(menu-bar-mode tool-bar-mode scroll-bar-mode))
+
+;; Maximize initial frame
+
+
+;; Maximize initial frame
+(add-to-list 'initial-frame-alist '(fullscreen . maximized))
 
 ;; Theme - the Doom One theme is the default, but ensure some other
 ;; themes are available
@@ -1039,22 +1045,25 @@ or as a formatted string containing the non-zero components of above list eg. 2d
 ;; show an ascii art of emacs
 (load (concat user-emacs-directory "site-local/ascii.el"))
 (defun welcome-buffer ()
-  (let ((welcome-buffer (generate-new-buffer "*startup*")))
+  (let* ((welcome-buffer (generate-new-buffer "*startup*"))
+         (version-string (replace-regexp-in-string "\n" "" (emacs-version)))
+         (image-path (concat user-emacs-directory "site-local/emacs.png"))
+         (image (create-image image-path))
+         (image-width (car (image-size image)))
+         (left-margin (floor (/ (- (window-width) image-width) 2))))
     (set-buffer welcome-buffer)
-    (insert
-     ";; " (replace-regexp-in-string "\n" "" (emacs-version)) "
-;;
-"
-     (replace-regexp-in-string "//" ";;" (ascii-art-title)) "
-;;
-;; "
-     (format "Loaded in %.05f seconds."
-             (time-to-seconds (time-since emacs-load-start-time))) "
-;;
-"
-             (fortune-cookie) "
+    (setq truncate-lines t)
+    (insert ";; " version-string "\n\n\n")
+    (if (display-graphic-p)
+        (progn
+          (insert (make-string left-margin ?\ ))
+          (insert-image image))
+      (insert (replace-regexp-in-string "//" ";;" (ascii-art-title)) "\n;;\n;;"))
 
-")
+    (insert (make-string 5 ?\n)
+            (format "\n;; Loaded in %.05f seconds.\n\n\n"
+                    (time-to-seconds (time-since emacs-load-start-time))))
+    (insert (fortune-cookie))
     (read-only-mode)
     welcome-buffer))
 
