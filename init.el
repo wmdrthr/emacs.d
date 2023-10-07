@@ -338,10 +338,8 @@
       '(menu-bar-mode tool-bar-mode scroll-bar-mode))
 
 ;; Maximize initial frame
-
-
-;; Maximize initial frame
-(add-to-list 'initial-frame-alist '(fullscreen . maximized))
+(when (eq system-type 'darwin)
+  (add-to-list 'initial-frame-alist '(fullscreen . maximized)))
 
 ;; Theme - the Doom One theme is the default, but ensure some other
 ;; themes are available
@@ -446,7 +444,7 @@
   :config (sml/setup))
 
 ;; Native Line Numbers
-(global-display-line-numbers-mode)
+(global-display-line-numbers-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; OSX specific customizations
@@ -852,7 +850,7 @@
       (save-match-data
         (progn
           (re-search-backward "[^ \t\r\n]" nil t)
-          (re-search-forward "[ t\r\n]+" nil t)
+          (re-search-forward "[ \t\r\n]+" nil t)
           (replace-match " " nil nil))))))
 (bind-key "M-z" 'kill-whitespace)
 
