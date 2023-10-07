@@ -8,9 +8,12 @@
                            ;common-lisp
                            ;haskell
                            ;golang
-                           rust
+                           ;rust
                            python
                            )))
 
 (defvar font-size 140)
 
+;; Local Variables:
+;; flycheck-disabled-checkers: (emacs-lip-checkdoc emacs-lisp)
+;; End:
