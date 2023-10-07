@@ -1,6 +1,6 @@
 ;; -*- mode: Emacs-Lisp -*-
 ;; .emacs
-;; Time-stamp: <2023-06-15 20:21:41 shantanu>
+;; Time-stamp: <2023-10-07 12:10:10 shantanu>
 ;;    ___ _ __ ___   __ _  ___ ___
 ;;   / _ \ '_ ` _ \ / _` |/ __/ __|
 ;;  |  __/ | | | | | (_| | (__\__ \
@@ -757,6 +757,10 @@
       '(("https://helpshift.atlassian.net/\.*" . browse-url-chrome)
         ("https://gerrit.helpshift.com/\.*" . browse-url-chrome)
         ("." . browse-url-firefox)))
+
+;; Always use dict.org for dictionary lookup
+(setq dictionary-server "dict.org")
+(global-set-key (kbd "C-c l") 'dictionary-lookup-definition)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keybindings and useful functions
